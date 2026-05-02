@@ -187,32 +187,32 @@ Goal: Implement one complete weapon and a shared damage system.
 
 ## Weapon Architecture
 
-- [ ] Create `WeaponData` ScriptableObject.
-- [ ] Add weapon name.
-- [ ] Add damage.
-- [ ] Add fire rate.
-- [ ] Add range.
-- [ ] Add magazine size.
-- [ ] Add reserve ammo.
-- [ ] Add reload time.
-- [ ] Add weapon spread if needed.
-- [ ] Create `WeaponController` script.
-- [ ] Create `Weapon` runtime script or component.
-- [ ] Decide if weapons are hitscan only for project scope.
+- [x] Create `WeaponData` ScriptableObject.
+- [x] Add weapon name.
+- [x] Add damage.
+- [x] Add fire rate.
+- [x] Add range.
+- [x] Add magazine size.
+- [x] Add reserve ammo.
+- [x] Add reload time.
+- [x] Add weapon spread if needed.
+- [x] Create `WeaponController` script.
+- [x] Create `Weapon` runtime script or component.
+- [x] Decide if weapons are hitscan only for project scope.
 
 ## First Weapon
 
-- [ ] Create rifle weapon data.
+- [x] Create rifle weapon data.
 - [ ] Create rifle prefab or placeholder object.
-- [ ] Add muzzle transform.
-- [ ] Implement input for fire.
-- [ ] Implement raycast hit detection.
-- [ ] Apply damage to `Damageable` targets.
-- [ ] Add magazine ammo.
-- [ ] Add reserve ammo.
-- [ ] Add reload input.
-- [ ] Prevent shooting while reloading.
-- [ ] Prevent shooting with empty magazine.
+- [x] Add muzzle transform.
+- [x] Implement input for fire.
+- [x] Implement raycast hit detection.
+- [x] Apply damage to `Damageable` targets.
+- [x] Add magazine ammo.
+- [x] Add reserve ammo.
+- [x] Add reload input.
+- [x] Prevent shooting while reloading.
+- [x] Prevent shooting with empty magazine.
 - [ ] Add simple muzzle flash placeholder.
 - [ ] Add simple hit impact placeholder.
 - [ ] Add shot sound placeholder if available.
@@ -234,17 +234,17 @@ Goal: Implement one complete weapon and a shared damage system.
 
 ## Combat Test
 
-- [ ] Place a dummy damageable target in scene.
-- [ ] Shoot target and confirm health decreases.
-- [ ] Reload works.
-- [ ] Ammo display updates correctly.
-- [ ] No shooting during reload.
+- [x] Place a dummy damageable target in scene.
+- [x] Shoot target and confirm health decreases.
+- [x] Reload works.
+- [x] Ammo display updates correctly.
+- [x] No shooting during reload.
 - [ ] No console errors.
 
 ## Definition Of Done
 
-- [ ] Player can shoot, damage, reload, and see ammo.
-- [ ] Damage system can be shared by player and bots.
+- [x] Player can shoot, damage, reload, and see ammo.
+- [x] Damage system can be shared by player and bots.
 - [ ] One weapon is complete enough for the full game loop.
 
 ---
