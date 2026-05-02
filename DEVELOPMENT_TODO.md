@@ -170,7 +170,7 @@ Goal: Create a basic first-person player in a simple arena.
 - [x] Player cannot fall out of the arena.
 - [x] Player collides with cover objects.
 - [x] HUD appears.
-- [ ] No console errors.
+- [x] No console errors.
 
 ## Definition Of Done
 
