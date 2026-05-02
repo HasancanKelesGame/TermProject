@@ -1,0 +1,40 @@
+# TermProject - FPS Arena Deathmatch
+
+Singleplayer first-person arena deathmatch prototype built in Unity.
+
+## Project Info
+
+- Unity version: 2022.3.62f3
+- Main scene: `Assets/_Project/Scenes/Arena_Main.unity`
+- Project source folder: `Assets/_Project`
+- Development checklist: `DEVELOPMENT_TODO.md`
+
+## Current State
+
+- First-person player movement with mouse look, sprint, jump, and gravity.
+- Shared `Damageable` health component.
+- Simple arena scene with floor, perimeter walls, visual cover props, and colliders.
+- Imported visual assets are used only for presentation.
+
+## Controls
+
+- `WASD`: move
+- `Mouse`: look
+- `Left Shift`: sprint
+- `Space`: jump
+- `Esc`: unlock/lock cursor
+
+## Original Code Rule
+
+Gameplay code and project logic are original to this project. Imported packages may be used for visuals, models, textures, materials, animations, sounds, music, fonts, particles, and editor-only workflow help. Imported gameplay systems, FPS controllers, AI controllers, weapon systems, wave managers, inventory systems, and health/damage logic should not be used.
+
+## Imported Assets
+
+- Synty `POLYGON Starter Pack` / `POLYGON Generic` visual assets from the Unity Asset Store.
+- Imported Synty assets are used as visual/environment assets only.
+- No imported `.cs`, `.asmdef`, `.asmref`, or `.dll` gameplay code is present under `Assets/Synty`.
+
+## Notes
+
+Some imported Synty materials use Shader Graph shaders. If a material appears pink, create a project-local material using Unity's `Standard` shader and assign the imported texture to its Albedo slot.
+
