@@ -153,12 +153,15 @@ Goal: Create a basic first-person player in a simple arena.
 
 ## Basic HUD
 
-- [ ] Create HUD canvas.
-- [ ] Add health display.
-- [ ] Add ammo display placeholder.
-- [ ] Add wave number placeholder.
-- [ ] Add score/kill count placeholder.
-- [ ] Make HUD readable at target resolution.
+- [x] Create original `HudController` script for health, ammo, wave, kills, and score text.
+- [x] Create HUD canvas.
+- [x] Add health display.
+- [x] Add ammo display placeholder.
+- [x] Add wave number placeholder.
+- [x] Add score/kill count placeholder.
+- [x] Add center crosshair.
+- [x] Wire HUD text references to `HudController`.
+- [x] Make HUD readable at target resolution.
 
 ## Prototype Test
 
@@ -166,14 +169,14 @@ Goal: Create a basic first-person player in a simple arena.
 - [x] Camera look feels usable.
 - [x] Player cannot fall out of the arena.
 - [x] Player collides with cover objects.
-- [ ] HUD appears.
+- [x] HUD appears.
 - [ ] No console errors.
 
 ## Definition Of Done
 
 - [x] A player can move around the arena in first person.
 - [x] Player has health.
-- [ ] Basic HUD is visible.
+- [x] Basic HUD is visible.
 - [x] Scene is saved as the main gameplay scene.
 
 ---

@@ -8,8 +8,8 @@ namespace TermProject.Game
         [SerializeField] private float maxHealth = 100f;
         [SerializeField] private bool destroyOnDeath;
 
-        public UnityEvent<float, float> HealthChanged;
-        public UnityEvent Died;
+        public UnityEvent<float, float> HealthChanged = new UnityEvent<float, float>();
+        public UnityEvent Died = new UnityEvent();
 
         private float currentHealth;
         private bool dead;

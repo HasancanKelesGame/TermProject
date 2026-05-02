@@ -33,8 +33,8 @@ Gameplay code and project logic are original to this project. Imported packages 
 - Synty `POLYGON Starter Pack` / `POLYGON Generic` visual assets from the Unity Asset Store.
 - Imported Synty assets are used as visual/environment assets only.
 - No imported `.cs`, `.asmdef`, `.asmref`, or `.dll` gameplay code is present under `Assets/Synty`.
+- TextMesh Pro essentials are included for HUD text rendering.
 
 ## Notes
 
 Some imported Synty materials use Shader Graph shaders. If a material appears pink, create a project-local material using Unity's `Standard` shader and assign the imported texture to its Albedo slot.
-
