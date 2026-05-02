@@ -14,12 +14,15 @@ Singleplayer first-person arena deathmatch prototype built in Unity.
 - First-person player movement with mouse look, sprint, jump, and gravity.
 - Shared `Damageable` health component.
 - Simple arena scene with floor, perimeter walls, visual cover props, and colliders.
+- Hitscan rifle prototype with ammo, reload, muzzle flash, hit impact, recoil, view bob, and reload motion.
 - Imported visual assets are used only for presentation.
 
 ## Controls
 
 - `WASD`: move
 - `Mouse`: look
+- `Left Mouse`: fire rifle
+- `R`: reload rifle
 - `Left Shift`: sprint
 - `Space`: jump
 - `Esc`: unlock/lock cursor
@@ -32,7 +35,9 @@ Gameplay code and project logic are original to this project. Imported packages 
 
 - Synty `POLYGON Starter Pack` / `POLYGON Generic` visual assets from the Unity Asset Store.
 - Imported Synty assets are used as visual/environment assets only.
-- No imported `.cs`, `.asmdef`, `.asmref`, or `.dll` gameplay code is present under `Assets/Synty`.
+- Fun Assets `Guns Pack: Low Poly Guns Collection` visual weapon models/textures from the Unity Asset Store.
+- Imported weapon assets are used as visual rifle assets only.
+- No imported `.cs`, `.asmdef`, `.asmref`, or `.dll` gameplay code is present under imported asset folders.
 - TextMesh Pro essentials are included for HUD text rendering.
 
 ## Notes

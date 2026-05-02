@@ -203,7 +203,7 @@ Goal: Implement one complete weapon and a shared damage system.
 ## First Weapon
 
 - [x] Create rifle weapon data.
-- [ ] Create rifle prefab or placeholder object.
+- [x] Create rifle prefab or placeholder object.
 - [x] Add muzzle transform.
 - [x] Implement input for fire.
 - [x] Implement raycast hit detection.
@@ -213,8 +213,11 @@ Goal: Implement one complete weapon and a shared damage system.
 - [x] Add reload input.
 - [x] Prevent shooting while reloading.
 - [x] Prevent shooting with empty magazine.
-- [ ] Add simple muzzle flash placeholder.
-- [ ] Add simple hit impact placeholder.
+- [x] Add simple muzzle flash placeholder.
+- [x] Add simple hit impact placeholder.
+- [x] Add visual rifle model from imported asset pack.
+- [x] Add weapon sway/bob/recoil motion.
+- [x] Add simple reload motion.
 - [ ] Add shot sound placeholder if available.
 - [ ] Add reload sound placeholder if available.
 
@@ -239,13 +242,13 @@ Goal: Implement one complete weapon and a shared damage system.
 - [x] Reload works.
 - [x] Ammo display updates correctly.
 - [x] No shooting during reload.
-- [ ] No console errors.
+- [x] No console errors.
 
 ## Definition Of Done
 
 - [x] Player can shoot, damage, reload, and see ammo.
 - [x] Damage system can be shared by player and bots.
-- [ ] One weapon is complete enough for the full game loop.
+- [x] One weapon is complete enough for the full game loop.
 
 ---
 

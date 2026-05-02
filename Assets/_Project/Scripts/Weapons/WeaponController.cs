@@ -20,6 +20,13 @@ namespace TermProject.Weapons
         [SerializeField] private KeyCode reloadKey = KeyCode.R;
         [SerializeField] private bool automaticFire = true;
 
+        [Header("Effects")]
+        [SerializeField] private ParticleSystem muzzleFlash;
+        [SerializeField] private Light muzzleLight;
+        [SerializeField] private float muzzleLightDuration = 0.04f;
+        [SerializeField] private GameObject hitImpactPrefab;
+        [SerializeField] private float hitImpactLifetime = 1.5f;
+
         [Header("Debug")]
         [SerializeField] private bool drawShotRays;
         [SerializeField] private float debugRayDuration = 0.15f;
@@ -29,12 +36,16 @@ namespace TermProject.Weapons
         private int reserveAmmo;
         private float nextFireTime;
         private float reloadCompleteTime;
+        private float muzzleLightOffTime;
         private bool reloading;
 
         public WeaponData CurrentWeapon => currentWeapon;
         public int MagazineAmmo => magazineAmmo;
         public int ReserveAmmo => reserveAmmo;
         public bool IsReloading => reloading;
+        public event System.Action ShotFired;
+        public event System.Action<float> ReloadStarted;
+        public event System.Action ReloadFinished;
 
         private void Awake()
         {
@@ -48,6 +59,11 @@ namespace TermProject.Weapons
                 hudController = FindFirstObjectByType<HudController>();
             }
 
+            if (muzzleLight != null)
+            {
+                muzzleLight.enabled = false;
+            }
+
             EquipWeapon(startingWeapon);
         }
 
@@ -58,6 +74,8 @@ namespace TermProject.Weapons
 
         private void Update()
         {
+            UpdateEffectTimers();
+
             if (currentWeapon == null || aimCamera == null)
             {
                 return;
@@ -123,6 +141,8 @@ namespace TermProject.Weapons
             nextFireTime = Time.time + currentWeapon.SecondsPerShot;
             magazineAmmo--;
             RefreshHud();
+            PlayMuzzleEffects();
+            ShotFired?.Invoke();
 
             Ray shotRay = GetShotRay();
 
@@ -140,6 +160,8 @@ namespace TermProject.Weapons
             {
                 Debug.DrawLine(GetVisualShotOrigin(), hit.point, Color.red, debugRayDuration);
             }
+
+            SpawnHitImpact(hit);
 
             Damageable damageable = hit.collider.GetComponentInParent<Damageable>();
 
@@ -172,6 +194,42 @@ namespace TermProject.Weapons
             return muzzleTransform != null ? muzzleTransform.position : aimCamera.transform.position;
         }
 
+        private void PlayMuzzleEffects()
+        {
+            if (muzzleFlash != null)
+            {
+                muzzleFlash.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                muzzleFlash.Play();
+            }
+
+            if (muzzleLight != null)
+            {
+                muzzleLight.enabled = true;
+                muzzleLightOffTime = Time.time + muzzleLightDuration;
+            }
+        }
+
+        private void SpawnHitImpact(RaycastHit hit)
+        {
+            if (hitImpactPrefab == null)
+            {
+                return;
+            }
+
+            Quaternion rotation = Quaternion.LookRotation(hit.normal);
+            Vector3 position = hit.point + hit.normal * 0.01f;
+            GameObject impact = Instantiate(hitImpactPrefab, position, rotation);
+            Destroy(impact, hitImpactLifetime);
+        }
+
+        private void UpdateEffectTimers()
+        {
+            if (muzzleLight != null && muzzleLight.enabled && Time.time >= muzzleLightOffTime)
+            {
+                muzzleLight.enabled = false;
+            }
+        }
+
         private void TryStartReload()
         {
             if (reloading || reserveAmmo <= 0 || magazineAmmo >= currentWeapon.MagazineSize)
@@ -181,6 +239,7 @@ namespace TermProject.Weapons
 
             reloading = true;
             reloadCompleteTime = Time.time + currentWeapon.ReloadTime;
+            ReloadStarted?.Invoke(currentWeapon.ReloadTime);
         }
 
         private void UpdateReload()
@@ -197,6 +256,7 @@ namespace TermProject.Weapons
             reserveAmmo -= loadedAmmo;
             reloading = false;
             RefreshHud();
+            ReloadFinished?.Invoke();
         }
 
         private void RefreshHud()
