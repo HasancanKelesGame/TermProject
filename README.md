@@ -15,6 +15,7 @@ Singleplayer first-person arena deathmatch prototype built in Unity.
 - Shared `Damageable` health component.
 - Simple arena scene with floor, perimeter walls, visual cover props, and colliders.
 - Hitscan rifle prototype with ammo, reload, muzzle flash, hit impact, recoil, view bob, and reload motion.
+- NavMesh-based test bot with finite-state patrol/detect/chase/attack/death behavior.
 - Imported visual assets are used only for presentation.
 
 ## Controls
@@ -39,7 +40,8 @@ Gameplay code and project logic are original to this project. Imported packages 
 - Imported weapon assets are used as visual rifle assets only.
 - No imported `.cs`, `.asmdef`, `.asmref`, or `.dll` gameplay code is present under imported asset folders.
 - TextMesh Pro essentials are included for HUD text rendering.
+- Unity AI Navigation is included for NavMesh baking and navigation components.
 
 ## Notes
 
-Some imported Synty materials use Shader Graph shaders. If a material appears pink, create a project-local material using Unity's `Standard` shader and assign the imported texture to its Albedo slot.
+Some imported Synty materials use Shader Graph shaders. If a material appears pink, create a project-local material using Unity's `Standard` shader and assign the imported texture to its Albedo slot. `M_Bot_StarterAtlas` is used as the project-local bot character material.

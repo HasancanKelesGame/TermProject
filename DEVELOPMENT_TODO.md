@@ -258,70 +258,71 @@ Goal: Create one bot that navigates, detects the player, attacks, and dies.
 
 ## Bot Prefab
 
-- [ ] Create simple bot model placeholder.
-- [ ] Add collider.
-- [ ] Add Rigidbody only if needed.
-- [ ] Add NavMeshAgent.
-- [ ] Add `Damageable` or `Health`.
-- [ ] Add bot death handling.
+- [x] Create simple bot model placeholder.
+- [x] Add collider.
+- [x] Confirm Rigidbody is not needed for current NavMeshAgent setup.
+- [x] Add NavMeshAgent.
+- [x] Add `Damageable` or `Health`.
+- [x] Add bot death handling.
+- [x] Add bot visual feedback on hit/death.
 - [ ] Create bot prefab.
 
 ## NavMesh Setup
 
-- [ ] Install or enable AI Navigation package if needed.
-- [ ] Add NavMeshSurface to arena.
-- [ ] Mark walkable environment.
-- [ ] Mark obstacles.
-- [ ] Bake NavMesh.
-- [ ] Confirm bot can reach player area.
+- [x] Install or enable AI Navigation package if needed.
+- [x] Add NavMeshSurface to arena.
+- [x] Mark walkable environment.
+- [x] Mark obstacles.
+- [x] Bake NavMesh.
+- [x] Confirm bot can reach player area.
 - [ ] Add spawn point validation for NavMesh.
 
 ## Bot FSM
 
 Create `BotAI` using a simple finite state machine.
 
-- [ ] Define bot states:
-  - [ ] Patrol
-  - [ ] Detect
-  - [ ] Chase
-  - [ ] Attack
-  - [ ] Retreat
-  - [ ] Dead
-- [ ] Implement state enum.
-- [ ] Implement state transition method.
-- [ ] Add debug current state field in Inspector.
-- [ ] Add update loop for active state.
+- [x] Define bot states:
+  - [x] Patrol
+  - [x] Detect
+  - [x] Chase
+  - [x] Attack
+  - [x] Retreat
+  - [x] Dead
+- [x] Implement state enum.
+- [x] Implement state transition method.
+- [x] Add debug current state field in Inspector.
+- [x] Add update loop for active state.
 
 ## Bot Sensing
 
-- [ ] Add detection range.
-- [ ] Add attack range.
-- [ ] Add field of view angle if time permits.
-- [ ] Add line-of-sight raycast.
-- [ ] Detect player only when visible.
-- [ ] Lose player after delay if hidden.
+- [x] Add detection range.
+- [x] Add attack range.
+- [x] Add field of view angle if time permits.
+- [x] Add line-of-sight raycast.
+- [x] Detect player only when visible.
+- [x] Lose player after delay if hidden.
 
 ## Patrol State
 
 - [ ] Add patrol points.
 - [ ] Choose random patrol destination.
-- [ ] Move using NavMeshAgent.
+- [ ] Move between patrol points using NavMeshAgent.
 - [ ] Wait briefly at patrol point.
-- [ ] Transition to chase/detect when player is seen.
+- [x] Transition to chase/detect when player is seen.
 
 ## Chase State
 
-- [ ] Set NavMeshAgent destination to player position.
-- [ ] Stop chasing if player is lost for too long.
-- [ ] Transition to attack when in range and line of sight.
+- [x] Set NavMeshAgent destination to player position.
+- [x] Stop chasing if player is lost for too long.
+- [x] Transition to attack when in range and line of sight.
 
 ## Attack State
 
-- [ ] Face player while attacking.
-- [ ] Shoot or damage player at fixed interval.
-- [ ] Use raycast line of sight before damaging.
-- [ ] Add attack cooldown.
-- [ ] Transition back to chase if player moves out of range.
+- [x] Face player while attacking.
+- [x] Shoot or damage player at fixed interval.
+- [x] Use raycast line of sight before damaging.
+- [x] Add attack cooldown.
+- [x] Transition back to chase if player moves out of range.
 
 ## Retreat State
 
@@ -332,27 +333,27 @@ Create `BotAI` using a simple finite state machine.
 
 ## Death State
 
-- [ ] Stop NavMeshAgent.
-- [ ] Disable attacks.
+- [x] Stop NavMeshAgent.
+- [x] Disable attacks.
 - [ ] Notify game manager of kill.
-- [ ] Destroy or pool bot after delay.
+- [x] Destroy or pool bot after delay.
 
 ## Bot Test
 
-- [ ] Bot spawns in scene.
-- [ ] Bot patrols or idles.
-- [ ] Bot sees player.
-- [ ] Bot chases player.
-- [ ] Bot attacks player.
-- [ ] Player can kill bot.
+- [x] Bot spawns in scene.
+- [x] Bot patrols or idles.
+- [x] Bot sees player.
+- [x] Bot chases player.
+- [x] Bot attacks player.
+- [x] Player can kill bot.
 - [ ] Bot death increases kill count.
-- [ ] No console errors.
+- [x] No console errors.
 
 ## Definition Of Done
 
-- [ ] One bot type works from spawn to death.
-- [ ] Bot behavior is understandable and tunable.
-- [ ] NavMesh is functional in the arena.
+- [x] One bot type works from spawn to death.
+- [x] Bot behavior is understandable and tunable.
+- [x] NavMesh is functional in the arena.
 
 ---
 
