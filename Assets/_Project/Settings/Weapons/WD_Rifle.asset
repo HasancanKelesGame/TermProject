@@ -21,3 +21,7 @@ MonoBehaviour:
   startingReserveAmmo: 90
   maxReserveAmmo: 120
   reloadTime: 1.4
+  fireSound: {fileID: 8300000, guid: 67a455d9caf314935b546af96ea04d18, type: 3}
+  reloadSound: {fileID: 8300000, guid: cb6c4141c677e4acda866ec23add74ac, type: 3}
+  fireVolume: 0.8
+  reloadVolume: 0.7

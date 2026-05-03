@@ -16,6 +16,7 @@ Singleplayer first-person arena deathmatch prototype built in Unity.
 - Simple arena scene with floor, perimeter walls, visual cover props, and colliders.
 - Hitscan rifle and semi-auto pistol with weapon switching, separate ammo, reload, muzzle flash, hit impact, recoil, view bob, and reload motion.
 - Hit marker and player damage overlay provide combat feedback.
+- SFX are wired for weapon fire/reload/switching, rifle release tail, bot attack/death, player death, pickups, movement loop, and landing.
 - NavMesh-based test bot with finite-state patrol/detect/chase/attack/death behavior.
 - Reusable basic bot prefab with Synty character visual feedback.
 - Scene `GameManager` tracks wave, kills, and score; bot deaths update the HUD.
@@ -46,6 +47,8 @@ Gameplay code and project logic are original to this project. Imported packages 
 - Imported Synty assets are used as visual/environment assets only.
 - Fun Assets `Guns Pack: Low Poly Guns Collection` visual weapon models/textures from the Unity Asset Store.
 - Imported weapon assets are used as visual rifle/pistol assets only.
+- Imported MP3 sound effects under `Assets/_Project/Audio/SFX`: `rifle`, `pistol`, `reload`, `gunswitch`, `botfiresound`, `botdeath`, `playerdeath`, `pickup`, `walking`, and `jump`.
+- Imported audio assets are used as presentation-only SFX; audio playback logic is original project code.
 - No imported `.cs`, `.asmdef`, `.asmref`, or `.dll` gameplay code is present under imported asset folders.
 - TextMesh Pro essentials are included for HUD text rendering.
 - Unity AI Navigation is included for NavMesh baking and navigation components.

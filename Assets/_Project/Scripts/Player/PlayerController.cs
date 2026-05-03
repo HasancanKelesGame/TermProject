@@ -23,6 +23,20 @@ namespace TermProject.Player
         [SerializeField] private float minPitch = -80f;
         [SerializeField] private float maxPitch = 80f;
 
+        [Header("Audio")]
+        [SerializeField] private AudioSource movementAudioSource;
+        [SerializeField] private AudioSource movementLoopAudioSource;
+        [SerializeField] private AudioClip walkFootstepSound;
+        [SerializeField] private AudioClip runFootstepSound;
+        [SerializeField] private AudioClip jumpSound;
+        [SerializeField] private AudioClip landSound;
+        [SerializeField, Range(0f, 1f)] private float footstepVolume = 0.45f;
+        [SerializeField, Range(0f, 1f)] private float jumpVolume = 0.65f;
+        [SerializeField, Range(0f, 1f)] private float landVolume = 0.55f;
+        [SerializeField, Min(0.1f)] private float walkLoopPitch = 1f;
+        [SerializeField, Min(0.1f)] private float runLoopPitch = 1.12f;
+        [SerializeField, Min(0f)] private float minAirTimeForLandingSound = 0.15f;
+
         private CharacterController characterController;
         private float verticalVelocity;
         private float cameraPitch;
@@ -31,6 +45,8 @@ namespace TermProject.Player
         private bool jumpedSinceGrounded;
         private float lastGroundedTime = -999f;
         private float lastJumpPressedTime = -999f;
+        private float lastLeftGroundTime = -999f;
+        private bool hasGroundedState;
 
         private void Awake()
         {
@@ -40,6 +56,28 @@ namespace TermProject.Player
             {
                 playerCamera = GetComponentInChildren<Camera>();
             }
+
+            if (movementAudioSource == null)
+            {
+                movementAudioSource = GetComponent<AudioSource>();
+            }
+
+            if (movementAudioSource == null)
+            {
+                movementAudioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            movementAudioSource.playOnAwake = false;
+            movementAudioSource.spatialBlend = 0f;
+
+            if (movementLoopAudioSource == null)
+            {
+                movementLoopAudioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            movementLoopAudioSource.playOnAwake = false;
+            movementLoopAudioSource.spatialBlend = 0f;
+            movementLoopAudioSource.loop = true;
         }
 
         private void Start()
@@ -70,6 +108,7 @@ namespace TermProject.Player
             if (!enabled)
             {
                 verticalVelocity = 0f;
+                StopMovementLoop();
             }
         }
 
@@ -99,6 +138,7 @@ namespace TermProject.Player
         private void Move()
         {
             bool jumpPressed = Input.GetButtonDown("Jump");
+            bool wasGrounded = grounded;
 
             if (jumpPressed)
             {
@@ -113,13 +153,15 @@ namespace TermProject.Player
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
             Vector3 input = new Vector3(horizontal, 0f, vertical);
+            bool hasMoveInput = input.sqrMagnitude > 0.01f;
 
             if (input.sqrMagnitude > 1f)
             {
                 input.Normalize();
             }
 
-            float targetSpeed = Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed;
+            bool sprinting = Input.GetKey(KeyCode.LeftShift) && hasMoveInput;
+            float targetSpeed = sprinting ? sprintSpeed : walkSpeed;
             Vector3 move = transform.right * input.x + transform.forward * input.z;
 
             bool canUseGroundedJump = Time.time - lastGroundedTime <= groundedGraceTime && !jumpedSinceGrounded;
@@ -130,6 +172,8 @@ namespace TermProject.Player
                 verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
                 jumpedSinceGrounded = true;
                 lastJumpPressedTime = -999f;
+                StopMovementLoop();
+                PlayMovementSound(jumpSound, jumpVolume);
             }
 
             verticalVelocity += gravity * Time.deltaTime;
@@ -140,8 +184,26 @@ namespace TermProject.Player
 
             grounded = ((collisionFlags & CollisionFlags.Below) != 0) || (verticalVelocity <= 0f && ProbeGround());
 
+            if (!hasGroundedState)
+            {
+                wasGrounded = grounded;
+                hasGroundedState = true;
+            }
+
+            if (!grounded && wasGrounded)
+            {
+                lastLeftGroundTime = Time.time;
+            }
+
             if (grounded)
             {
+                bool landed = !wasGrounded && Time.time - lastLeftGroundTime >= minAirTimeForLandingSound;
+
+                if (landed)
+                {
+                    PlayMovementSound(landSound, landVolume);
+                }
+
                 lastGroundedTime = Time.time;
                 jumpedSinceGrounded = false;
 
@@ -150,6 +212,8 @@ namespace TermProject.Player
                     verticalVelocity = -2f;
                 }
             }
+
+            UpdateMovementLoop(hasMoveInput, sprinting);
         }
 
         private bool ProbeGround()
@@ -161,6 +225,54 @@ namespace TermProject.Player
                 groundProbeDistance,
                 groundLayers,
                 QueryTriggerInteraction.Ignore);
+        }
+
+        private void UpdateMovementLoop(bool hasMoveInput, bool sprinting)
+        {
+            if (!grounded || !hasMoveInput)
+            {
+                StopMovementLoop();
+                return;
+            }
+
+            AudioClip clip = sprinting && runFootstepSound != null ? runFootstepSound : walkFootstepSound;
+
+            if (clip == null || movementLoopAudioSource == null)
+            {
+                StopMovementLoop();
+                return;
+            }
+
+            movementLoopAudioSource.volume = footstepVolume;
+            movementLoopAudioSource.pitch = sprinting ? runLoopPitch : walkLoopPitch;
+            movementLoopAudioSource.loop = true;
+
+            if (movementLoopAudioSource.clip == clip && movementLoopAudioSource.isPlaying)
+            {
+                return;
+            }
+
+            movementLoopAudioSource.clip = clip;
+            movementLoopAudioSource.time = 0f;
+            movementLoopAudioSource.Play();
+        }
+
+        private void PlayMovementSound(AudioClip clip, float volume)
+        {
+            if (clip != null && movementAudioSource != null)
+            {
+                movementAudioSource.PlayOneShot(clip, volume);
+            }
+        }
+
+        private void StopMovementLoop()
+        {
+            if (movementLoopAudioSource == null || !movementLoopAudioSource.isPlaying)
+            {
+                return;
+            }
+
+            movementLoopAudioSource.Stop();
         }
     }
 }

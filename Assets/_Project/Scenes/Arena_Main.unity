@@ -1220,6 +1220,17 @@ MonoBehaviour:
   mouseSensitivity: 2.2
   minPitch: -80
   maxPitch: 80
+  movementAudioSource: {fileID: 0}
+  walkFootstepSound: {fileID: 8300000, guid: 9d9002fb00c724ca2b211f1e945cb5e0, type: 3}
+  runFootstepSound: {fileID: 8300000, guid: 9d9002fb00c724ca2b211f1e945cb5e0, type: 3}
+  jumpSound: {fileID: 0}
+  landSound: {fileID: 8300000, guid: 25264c638d8c54a6bb5a8c0d788ea864, type: 3}
+  footstepVolume: 0.45
+  jumpVolume: 0.65
+  landVolume: 0.55
+  walkFootstepInterval: 0.48
+  runFootstepInterval: 0.32
+  minAirTimeForLandingSound: 0.15
 --- !u!143 &561419897
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1278,6 +1289,9 @@ MonoBehaviour:
   aimCamera: {fileID: 1840436092}
   hudController: {fileID: 1452607754}
   muzzleTransform: {fileID: 1728652817}
+  audioSource: {fileID: 0}
+  automaticFireAudioSource: {fileID: 0}
+  automaticFireEchoAudioSource: {fileID: 0}
   weaponSlots:
   - weapon: {fileID: 11400000, guid: 412a4788d158f41ddaf733b36dcad55b, type: 2}
     visualRoot: {fileID: 334265490}
@@ -1290,6 +1304,11 @@ MonoBehaviour:
   startingSlotIndex: 0
   enableNumberKeySwitching: 1
   enableScrollWheelSwitching: 1
+  weaponSwitchSound: {fileID: 8300000, guid: 63a1370102edc4896a7cb93a33c108d0, type: 3}
+  weaponSwitchVolume: 0.6
+  automaticFireStopDelay: 0.08
+  automaticFireEchoDuration: 0.55
+  automaticFireEchoVolumeMultiplier: 0.212
   hitLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -1600,6 +1619,9 @@ MonoBehaviour:
   playerHealth: {fileID: 561419895}
   playerController: {fileID: 561419896}
   weaponController: {fileID: 561419899}
+  audioSource: {fileID: 0}
+  playerDeathSound: {fileID: 8300000, guid: 002ddfc3f2cfc4201be2b736be0909fc, type: 3}
+  playerDeathVolume: 0.8
   startingWave: 1
   scorePerKill: 100
 --- !u!4 &817231952
@@ -1690,6 +1712,8 @@ MonoBehaviour:
   bobVisual: 1
   bobHeight: 0.15
   bobSpeed: 2
+  pickupSound: {fileID: 8300000, guid: 88f60ab67e2ba4e098fd023173cc578c, type: 3}
+  pickupVolume: 0.8
 --- !u!135 &880132153
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -7790,6 +7814,9 @@ MonoBehaviour:
   titleText: {fileID: 605268288}
   finalStatsText: {fileID: 1655317079}
   restartButton: {fileID: 1901059675}
+  audioSource: {fileID: 0}
+  buttonClickSound: {fileID: 8300000, guid: 63a1370102edc4896a7cb93a33c108d0, type: 3}
+  buttonClickVolume: 0.7
 --- !u!114 &1605450697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8641,6 +8668,8 @@ MonoBehaviour:
   bobVisual: 1
   bobHeight: 0.15
   bobSpeed: 2
+  pickupSound: {fileID: 8300000, guid: 88f60ab67e2ba4e098fd023173cc578c, type: 3}
+  pickupVolume: 0.8
 --- !u!135 &1895092609
 SphereCollider:
   m_ObjectHideFlags: 0

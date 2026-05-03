@@ -20,6 +20,12 @@ namespace TermProject.Weapons
         [SerializeField] private int maxReserveAmmo = 90;
         [SerializeField] private float reloadTime = 1.4f;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip fireSound;
+        [SerializeField] private AudioClip reloadSound;
+        [SerializeField, Range(0f, 1f)] private float fireVolume = 0.8f;
+        [SerializeField, Range(0f, 1f)] private float reloadVolume = 0.7f;
+
         public string WeaponName => string.IsNullOrWhiteSpace(weaponName) ? name : weaponName;
         public float Damage => Mathf.Max(0f, damage);
         public float Range => Mathf.Max(1f, range);
@@ -30,5 +36,9 @@ namespace TermProject.Weapons
         public int MaxReserveAmmo => Mathf.Max(StartingReserveAmmo, maxReserveAmmo);
         public float ReloadTime => Mathf.Max(0.05f, reloadTime);
         public float SecondsPerShot => 1f / FireRate;
+        public AudioClip FireSound => fireSound;
+        public AudioClip ReloadSound => reloadSound;
+        public float FireVolume => Mathf.Clamp01(fireVolume);
+        public float ReloadVolume => Mathf.Clamp01(reloadVolume);
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using TermProject.Game;
 using TermProject.UI;
@@ -59,12 +60,22 @@ namespace TermProject.Weapons
         [SerializeField] private Camera aimCamera;
         [SerializeField] private HudController hudController;
         [SerializeField] private Transform muzzleTransform;
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioSource automaticFireAudioSource;
+        [SerializeField] private AudioSource automaticFireEchoAudioSource;
 
         [Header("Weapon Slots")]
         [SerializeField] private WeaponSlot[] weaponSlots;
         [SerializeField] private int startingSlotIndex;
         [SerializeField] private bool enableNumberKeySwitching = true;
         [SerializeField] private bool enableScrollWheelSwitching = true;
+
+        [Header("Audio")]
+        [SerializeField] private AudioClip weaponSwitchSound;
+        [SerializeField, Range(0f, 1f)] private float weaponSwitchVolume = 0.6f;
+        [SerializeField, Min(0f)] private float automaticFireStopDelay = 0.08f;
+        [SerializeField, Min(0f)] private float automaticFireEchoDuration = 1f;
+        [SerializeField, Range(0f, 1f)] private float automaticFireEchoVolumeMultiplier = 0.35f;
 
         [Header("Hit Detection")]
         [SerializeField] private LayerMask hitLayers = ~0;
@@ -92,8 +103,11 @@ namespace TermProject.Weapons
         private float nextFireTime;
         private float reloadCompleteTime;
         private float muzzleLightOffTime;
+        private float automaticFireStopTime = -1f;
         private bool reloading;
         private bool inputEnabled = true;
+        private bool automaticFireSoundActive;
+        private Coroutine automaticFireEchoCoroutine;
 
         public WeaponData CurrentWeapon => currentWeapon;
         public int CurrentSlotIndex => currentSlotIndex;
@@ -117,6 +131,32 @@ namespace TermProject.Weapons
                 hudController = FindFirstObjectByType<HudController>();
             }
 
+            if (audioSource == null)
+            {
+                audioSource = GetComponent<AudioSource>();
+            }
+
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            Configure2DAudioSource(audioSource);
+
+            if (automaticFireAudioSource == null)
+            {
+                automaticFireAudioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            Configure2DAudioSource(automaticFireAudioSource);
+
+            if (automaticFireEchoAudioSource == null)
+            {
+                automaticFireEchoAudioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            Configure2DAudioSource(automaticFireEchoAudioSource);
+
             if (muzzleLight != null)
             {
                 muzzleLight.enabled = false;
@@ -134,6 +174,7 @@ namespace TermProject.Weapons
         private void Update()
         {
             UpdateEffectTimers();
+            UpdateAutomaticFireSound();
 
             if (aimCamera == null)
             {
@@ -159,6 +200,7 @@ namespace TermProject.Weapons
             }
 
             SaveCurrentSlotAmmo();
+            StopAutomaticFireSoundNow();
             SetAllSlotVisualsInactive();
             currentSlot = null;
             currentSlotIndex = -1;
@@ -182,12 +224,18 @@ namespace TermProject.Weapons
 
         public void SelectSlot(int slotIndex)
         {
+            SelectSlot(slotIndex, true);
+        }
+
+        private void SelectSlot(int slotIndex, bool playSwitchSound)
+        {
             if (!IsSlotIndexValid(slotIndex) || currentSlotIndex == slotIndex)
             {
                 return;
             }
 
             SaveCurrentSlotAmmo();
+            StopAutomaticFireSoundNow();
 
             if (reloading)
             {
@@ -205,6 +253,11 @@ namespace TermProject.Weapons
             reloadCompleteTime = 0f;
             SetActiveSlotVisual(slotIndex);
             RefreshHud();
+
+            if (playSwitchSound)
+            {
+                PlaySound(weaponSwitchSound, weaponSwitchVolume);
+            }
         }
 
         public void SetInputEnabled(bool enabled)
@@ -214,6 +267,7 @@ namespace TermProject.Weapons
             if (!enabled)
             {
                 reloading = false;
+                StopAutomaticFireSoundNow();
 
                 if (muzzleLight != null)
                 {
@@ -291,6 +345,7 @@ namespace TermProject.Weapons
             SaveCurrentSlotAmmo();
             RefreshHud();
             PlayMuzzleEffects();
+            PlayFireSound();
             ShotFired?.Invoke();
 
             Ray shotRay = GetShotRay();
@@ -390,6 +445,8 @@ namespace TermProject.Weapons
 
             reloading = true;
             reloadCompleteTime = Time.time + currentWeapon.ReloadTime;
+            StopAutomaticFireSoundNow();
+            PlaySound(currentWeapon.ReloadSound, currentWeapon.ReloadVolume);
             ReloadStarted?.Invoke(currentWeapon.ReloadTime);
         }
 
@@ -430,7 +487,7 @@ namespace TermProject.Weapons
 
             if (IsSlotIndexValid(clampedStartingSlot))
             {
-                SelectSlot(clampedStartingSlot);
+                SelectSlot(clampedStartingSlot, false);
                 return;
             }
 
@@ -593,6 +650,159 @@ namespace TermProject.Weapons
             }
 
             hudController.SetAmmo(magazineAmmo, reserveAmmo);
+        }
+
+        private void PlaySound(AudioClip clip, float volume)
+        {
+            if (clip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(clip, volume);
+            }
+        }
+
+        private void PlayFireSound()
+        {
+            if (currentWeapon == null || currentWeapon.FireSound == null)
+            {
+                return;
+            }
+
+            if (!CurrentWeaponUsesAutomaticFire() || automaticFireAudioSource == null)
+            {
+                PlaySound(currentWeapon.FireSound, currentWeapon.FireVolume);
+                return;
+            }
+
+            automaticFireAudioSource.clip = currentWeapon.FireSound;
+            automaticFireAudioSource.loop = false;
+            automaticFireAudioSource.volume = currentWeapon.FireVolume;
+            automaticFireAudioSource.Play();
+            automaticFireSoundActive = true;
+            automaticFireStopTime = -1f;
+        }
+
+        private void UpdateAutomaticFireSound()
+        {
+            if (!automaticFireSoundActive)
+            {
+                if (automaticFireStopTime > 0f && Time.time >= automaticFireStopTime)
+                {
+                    if (automaticFireAudioSource != null && automaticFireAudioSource.isPlaying)
+                    {
+                        automaticFireAudioSource.Stop();
+                    }
+
+                    automaticFireStopTime = -1f;
+                }
+
+                return;
+            }
+
+            if (ShouldKeepAutomaticFireSoundActive())
+            {
+                return;
+            }
+
+            PlayAutomaticFireEcho();
+            automaticFireSoundActive = false;
+            automaticFireStopTime = Time.time + automaticFireStopDelay;
+        }
+
+        private bool ShouldKeepAutomaticFireSoundActive()
+        {
+            return inputEnabled
+                && currentWeapon != null
+                && CurrentWeaponUsesAutomaticFire()
+                && !reloading
+                && magazineAmmo > 0
+                && Cursor.lockState == CursorLockMode.Locked
+                && Input.GetButton("Fire1");
+        }
+
+        private void StopAutomaticFireSoundNow()
+        {
+            automaticFireSoundActive = false;
+            automaticFireStopTime = -1f;
+
+            if (automaticFireAudioSource != null)
+            {
+                automaticFireAudioSource.Stop();
+            }
+
+            StopAutomaticFireEcho();
+        }
+
+        private static void Configure2DAudioSource(AudioSource source)
+        {
+            if (source == null)
+            {
+                return;
+            }
+
+            source.playOnAwake = false;
+            source.spatialBlend = 0f;
+        }
+
+        private void PlayAutomaticFireEcho()
+        {
+            if (currentWeapon == null
+                || currentWeapon.FireSound == null
+                || automaticFireEchoAudioSource == null
+                || automaticFireEchoDuration <= 0f)
+            {
+                return;
+            }
+
+            if (automaticFireEchoCoroutine != null)
+            {
+                StopCoroutine(automaticFireEchoCoroutine);
+            }
+
+            automaticFireEchoCoroutine = StartCoroutine(PlayAutomaticFireEchoRoutine(
+                currentWeapon.FireSound,
+                currentWeapon.FireVolume * automaticFireEchoVolumeMultiplier));
+        }
+
+        private IEnumerator PlayAutomaticFireEchoRoutine(AudioClip clip, float volume)
+        {
+            automaticFireEchoAudioSource.Stop();
+            automaticFireEchoAudioSource.clip = clip;
+            automaticFireEchoAudioSource.loop = false;
+            automaticFireEchoAudioSource.volume = volume;
+            automaticFireEchoAudioSource.time = 0f;
+            automaticFireEchoAudioSource.Play();
+
+            float startedAt = Time.time;
+            float duration = Mathf.Min(automaticFireEchoDuration, clip.length);
+
+            while (automaticFireEchoAudioSource != null && Time.time - startedAt < duration)
+            {
+                float elapsed = Time.time - startedAt;
+                float fade = Mathf.Clamp01(1f - elapsed / Mathf.Max(0.01f, duration));
+                automaticFireEchoAudioSource.volume = volume * fade;
+                yield return null;
+            }
+
+            if (automaticFireEchoAudioSource != null)
+            {
+                automaticFireEchoAudioSource.Stop();
+            }
+
+            automaticFireEchoCoroutine = null;
+        }
+
+        private void StopAutomaticFireEcho()
+        {
+            if (automaticFireEchoCoroutine != null)
+            {
+                StopCoroutine(automaticFireEchoCoroutine);
+                automaticFireEchoCoroutine = null;
+            }
+
+            if (automaticFireEchoAudioSource != null)
+            {
+                automaticFireEchoAudioSource.Stop();
+            }
         }
     }
 }

@@ -29,6 +29,10 @@ namespace TermProject.Pickups
         [SerializeField] private float bobHeight = 0.15f;
         [SerializeField] private float bobSpeed = 2f;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip pickupSound;
+        [SerializeField, Range(0f, 1f)] private float pickupVolume = 0.8f;
+
         private Collider[] pickupColliders;
         private Renderer[] renderers;
         private Vector3 visualStartLocalPosition;
@@ -127,6 +131,8 @@ namespace TermProject.Pickups
 
         private void Consume()
         {
+            PlayPickupSound();
+
             if (respawn)
             {
                 StartCoroutine(RespawnAfterDelay());
@@ -166,6 +172,14 @@ namespace TermProject.Pickups
                 {
                     renderers[i].enabled = value;
                 }
+            }
+        }
+
+        private void PlayPickupSound()
+        {
+            if (pickupSound != null)
+            {
+                AudioSource.PlayClipAtPoint(pickupSound, transform.position, pickupVolume);
             }
         }
     }

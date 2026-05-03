@@ -46,6 +46,13 @@ namespace TermProject.AI
         [SerializeField] private bool destroyAfterDeath = true;
         [SerializeField] private float deathDestroyDelay = 2f;
 
+        [Header("Audio")]
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioClip attackSound;
+        [SerializeField] private AudioClip deathSound;
+        [SerializeField, Range(0f, 1f)] private float attackVolume = 0.7f;
+        [SerializeField, Range(0f, 1f)] private float deathVolume = 0.8f;
+
         [Header("Debug")]
         [SerializeField] private BotState currentState = BotState.Patrol;
 
@@ -103,6 +110,22 @@ namespace TermProject.AI
         {
             agent = GetComponent<NavMeshAgent>();
             damageable = GetComponent<Damageable>();
+
+            if (audioSource == null)
+            {
+                audioSource = GetComponent<AudioSource>();
+            }
+
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            if (audioSource != null)
+            {
+                audioSource.playOnAwake = false;
+                audioSource.spatialBlend = 0f;
+            }
 
             if (eyePoint == null)
             {
@@ -280,6 +303,7 @@ namespace TermProject.AI
             if (playerDamageable != null)
             {
                 playerDamageable.ApplyDamage(attackDamage);
+                PlaySound(attackSound, attackVolume);
             }
         }
 
@@ -409,6 +433,8 @@ namespace TermProject.AI
                 GameManager.Instance?.RegisterBotDeath(this);
             }
 
+            PlaySound(deathSound, deathVolume);
+
             if (destroyAfterDeath)
             {
                 Destroy(gameObject, deathDestroyDelay);
@@ -437,6 +463,22 @@ namespace TermProject.AI
             {
                 agent.ResetPath();
             }
+        }
+
+        private void PlaySound(AudioClip clip, float volume)
+        {
+            if (clip == null)
+            {
+                return;
+            }
+
+            if (audioSource != null)
+            {
+                audioSource.PlayOneShot(clip, volume);
+                return;
+            }
+
+            AudioSource.PlayClipAtPoint(clip, transform.position, volume);
         }
 
         private void OnDrawGizmosSelected()

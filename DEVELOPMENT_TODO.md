@@ -218,8 +218,10 @@ Goal: Implement one complete weapon and a shared damage system.
 - [x] Add visual rifle model from imported asset pack.
 - [x] Add weapon sway/bob/recoil motion.
 - [x] Add simple reload motion.
-- [ ] Add shot sound placeholder if available.
-- [ ] Add reload sound placeholder if available.
+- [x] Add shot sound placeholder if available.
+- [x] Add reload sound placeholder if available.
+- [x] Add weapon switch sound.
+- [x] Add automatic rifle audio stop and release tail.
 
 ## Weapon Switching
 
@@ -458,7 +460,7 @@ Goal: Add health and ammo pickups to support longer waves.
 - [x] Add pickup type.
 - [x] Add respawn behavior if needed.
 - [x] Add rotate/bob visual effect if time permits.
-- [ ] Add pickup sound placeholder.
+- [x] Add pickup sound placeholder.
 - [ ] Add pickup UI feedback if time permits.
 
 ## Health Pickup
@@ -567,12 +569,16 @@ Goal: Make the game understandable and presentable.
 
 ## Audio
 
-- [ ] Add weapon fire sound.
-- [ ] Add reload sound.
-- [ ] Add bot attack sound.
-- [ ] Add bot death sound if available.
-- [ ] Add pickup sound.
-- [ ] Add UI button sound if time permits.
+- [x] Add weapon fire sound.
+- [x] Add reload sound.
+- [x] Add weapon switch sound.
+- [x] Add bot attack sound.
+- [x] Add bot death sound if available.
+- [x] Add player death sound.
+- [x] Add pickup sound.
+- [x] Add movement loop sound for walking/running.
+- [x] Add landing sound.
+- [x] Add UI button sound if time permits.
 - [ ] Add background music only if it does not distract.
 
 ## Visual Feedback

@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44a7f48b74c814a338a5f3338256c386, type: 3}
   m_Name: WD_Pistol
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   weaponName: Pistol
   damage: 18
   range: 55
@@ -21,3 +21,7 @@ MonoBehaviour:
   startingReserveAmmo: 48
   maxReserveAmmo: 72
   reloadTime: 1.1
+  fireSound: {fileID: 8300000, guid: e18ad66ce1e484c01a8069ec31c5769d, type: 3}
+  reloadSound: {fileID: 8300000, guid: cb6c4141c677e4acda866ec23add74ac, type: 3}
+  fireVolume: 0.8
+  reloadVolume: 0.7

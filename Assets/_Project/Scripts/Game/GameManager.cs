@@ -26,6 +26,11 @@ namespace TermProject.Game
         [SerializeField] private PlayerController playerController;
         [SerializeField] private WeaponController weaponController;
 
+        [Header("Audio")]
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioClip playerDeathSound;
+        [SerializeField, Range(0f, 1f)] private float playerDeathVolume = 0.8f;
+
         [Header("Run State")]
         [SerializeField] private int startingWave = 1;
 
@@ -84,6 +89,19 @@ namespace TermProject.Game
             {
                 playerHealth = playerController.GetComponent<Damageable>();
             }
+
+            if (audioSource == null)
+            {
+                audioSource = GetComponent<AudioSource>();
+            }
+
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f;
 
             gameOverMenu?.SetGameManager(this);
             currentWave = Mathf.Max(1, startingWave);
@@ -176,6 +194,7 @@ namespace TermProject.Game
             playerController?.SetControlsEnabled(false);
             playerController?.SetCursorLocked(false);
             weaponController?.SetInputEnabled(false);
+            PlaySound(playerDeathSound, playerDeathVolume);
             gameOverMenu?.Show(currentWave, totalKills, score);
             Time.timeScale = 0f;
         }
@@ -212,6 +231,14 @@ namespace TermProject.Game
             hudController.SetWave(currentWave);
             hudController.SetKills(totalKills);
             hudController.SetScore(score);
+        }
+
+        private void PlaySound(AudioClip clip, float volume)
+        {
+            if (clip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(clip, volume);
+            }
         }
     }
 }
