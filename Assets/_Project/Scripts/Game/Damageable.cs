@@ -10,6 +10,7 @@ namespace TermProject.Game
 
         public UnityEvent<float, float> HealthChanged = new UnityEvent<float, float>();
         public UnityEvent Died = new UnityEvent();
+        public event System.Action<float, float, float> Damaged;
 
         private float currentHealth;
         private bool dead;
@@ -32,8 +33,11 @@ namespace TermProject.Game
                 return;
             }
 
+            float previousHealth = currentHealth;
             currentHealth = Mathf.Max(0f, currentHealth - amount);
+            float appliedDamage = previousHealth - currentHealth;
             HealthChanged?.Invoke(currentHealth, maxHealth);
+            Damaged?.Invoke(appliedDamage, currentHealth, maxHealth);
 
             if (currentHealth <= 0f)
             {

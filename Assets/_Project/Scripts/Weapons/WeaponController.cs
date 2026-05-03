@@ -101,6 +101,7 @@ namespace TermProject.Weapons
         public int ReserveAmmo => reserveAmmo;
         public bool IsReloading => reloading;
         public event System.Action ShotFired;
+        public event System.Action<Damageable> DamageableHit;
         public event System.Action<float> ReloadStarted;
         public event System.Action ReloadFinished;
 
@@ -316,6 +317,7 @@ namespace TermProject.Weapons
             if (damageable != null)
             {
                 damageable.ApplyDamage(currentWeapon.Damage);
+                DamageableHit?.Invoke(damageable);
             }
         }
 

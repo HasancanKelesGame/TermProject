@@ -15,6 +15,7 @@ Singleplayer first-person arena deathmatch prototype built in Unity.
 - Shared `Damageable` health component.
 - Simple arena scene with floor, perimeter walls, visual cover props, and colliders.
 - Hitscan rifle and semi-auto pistol with weapon switching, separate ammo, reload, muzzle flash, hit impact, recoil, view bob, and reload motion.
+- Hit marker and player damage overlay provide combat feedback.
 - NavMesh-based test bot with finite-state patrol/detect/chase/attack/death behavior.
 - Reusable basic bot prefab with Synty character visual feedback.
 - Scene `GameManager` tracks wave, kills, and score; bot deaths update the HUD.

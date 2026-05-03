@@ -223,16 +223,16 @@ Goal: Implement one complete weapon and a shared damage system.
 
 ## Weapon Switching
 
-- [ ] Add weapon slot list.
-- [ ] Add number key switching.
-- [ ] Add scroll wheel switching if time permits.
+- [x] Add weapon slot list.
+- [x] Add number key switching.
+- [x] Add scroll wheel switching if time permits.
 - [ ] Update HUD weapon name.
-- [ ] Update HUD ammo values.
+- [x] Update HUD ammo values.
 
 ## Damage Feedback
 
-- [ ] Show hit marker when player hits a bot.
-- [ ] Add screen feedback when player takes damage.
+- [x] Show hit marker when player hits a bot.
+- [x] Add screen feedback when player takes damage.
 - [ ] Add simple bot damage flash if time permits.
 
 ## Combat Test
@@ -554,15 +554,15 @@ Goal: Make the game understandable and presentable.
 - [ ] Kill count is clear.
 - [ ] Score display is clear.
 - [ ] Crosshair is centered.
-- [ ] Hit marker is visible.
-- [ ] Damage feedback is visible but not distracting.
+- [x] Hit marker is visible.
+- [x] Damage feedback is visible but not distracting.
 
 ## Game Over Screen
 
-- [ ] Final score displayed.
-- [ ] Final wave displayed.
-- [ ] Final kill count displayed.
-- [ ] Restart button works.
+- [x] Final score displayed.
+- [x] Final wave displayed.
+- [x] Final kill count displayed.
+- [x] Restart button works.
 - [ ] Main menu button works.
 
 ## Audio
@@ -577,8 +577,8 @@ Goal: Make the game understandable and presentable.
 
 ## Visual Feedback
 
-- [ ] Add muzzle flash.
-- [ ] Add hit impact effect.
+- [x] Add muzzle flash.
+- [x] Add hit impact effect.
 - [ ] Add bot death effect or animation placeholder.
 - [ ] Add pickup visual effect if time permits.
 - [ ] Add simple material colors for readability.
