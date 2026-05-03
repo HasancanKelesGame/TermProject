@@ -121,6 +121,24 @@ namespace TermProject.Weapons
             }
         }
 
+        public int AddReserveAmmo(int amount)
+        {
+            if (currentWeapon == null || amount <= 0)
+            {
+                return 0;
+            }
+
+            int previousReserve = reserveAmmo;
+            reserveAmmo = Mathf.Min(currentWeapon.MaxReserveAmmo, reserveAmmo + amount);
+            RefreshHud();
+            return reserveAmmo - previousReserve;
+        }
+
+        public bool HasReserveAmmoSpace()
+        {
+            return currentWeapon != null && reserveAmmo < currentWeapon.MaxReserveAmmo;
+        }
+
         private void HandleInput()
         {
             if (!inputEnabled)

@@ -17,6 +17,7 @@ namespace TermProject.Weapons
         [Header("Ammo")]
         [SerializeField] private int magazineSize = 30;
         [SerializeField] private int startingReserveAmmo = 90;
+        [SerializeField] private int maxReserveAmmo = 90;
         [SerializeField] private float reloadTime = 1.4f;
 
         public string WeaponName => string.IsNullOrWhiteSpace(weaponName) ? name : weaponName;
@@ -26,6 +27,7 @@ namespace TermProject.Weapons
         public float SpreadAngle => Mathf.Max(0f, spreadAngle);
         public int MagazineSize => Mathf.Max(1, magazineSize);
         public int StartingReserveAmmo => Mathf.Max(0, startingReserveAmmo);
+        public int MaxReserveAmmo => Mathf.Max(StartingReserveAmmo, maxReserveAmmo);
         public float ReloadTime => Mathf.Max(0.05f, reloadTime);
         public float SecondsPerShot => 1f / FireRate;
     }

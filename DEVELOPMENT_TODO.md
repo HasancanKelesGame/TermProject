@@ -454,48 +454,48 @@ Goal: Add health and ammo pickups to support longer waves.
 
 ## Pickup Architecture
 
-- [ ] Create base `Pickup` script.
-- [ ] Add pickup type.
-- [ ] Add respawn behavior if needed.
-- [ ] Add rotate/bob visual effect if time permits.
+- [x] Create base `Pickup` script.
+- [x] Add pickup type.
+- [x] Add respawn behavior if needed.
+- [x] Add rotate/bob visual effect if time permits.
 - [ ] Add pickup sound placeholder.
 - [ ] Add pickup UI feedback if time permits.
 
 ## Health Pickup
 
 - [ ] Create health pickup prefab.
-- [ ] Restore fixed amount of health.
-- [ ] Do not exceed max health.
-- [ ] Destroy or hide after pickup.
-- [ ] Respawn after delay if needed.
+- [x] Restore fixed amount of health.
+- [x] Do not exceed max health.
+- [x] Destroy or hide after pickup.
+- [x] Respawn after delay if needed.
 
 ## Ammo Pickup
 
 - [ ] Create ammo pickup prefab.
-- [ ] Restore ammo for current weapon or all weapons.
-- [ ] Do not exceed max reserve ammo.
-- [ ] Destroy or hide after pickup.
-- [ ] Respawn after delay if needed.
+- [x] Restore ammo for current weapon or all weapons.
+- [x] Do not exceed max reserve ammo.
+- [x] Destroy or hide after pickup.
+- [x] Respawn after delay if needed.
 
 ## Pickup Spawning
 
-- [ ] Place fixed pickup locations in arena.
+- [x] Place fixed pickup locations in arena.
 - [ ] Add optional pickup manager.
-- [ ] Tune pickup availability.
-- [ ] Ensure pickups do not make the game too easy.
+- [x] Tune pickup availability.
+- [x] Ensure pickups do not make the game too easy.
 
 ## Pickup Test
 
-- [ ] Player can collect health pickup.
-- [ ] Player can collect ammo pickup.
-- [ ] HUD updates after pickup.
-- [ ] Pickups respawn if that feature is enabled.
-- [ ] No console errors.
+- [x] Player can collect health pickup.
+- [x] Player can collect ammo pickup.
+- [x] HUD updates after pickup.
+- [x] Pickups respawn if that feature is enabled.
+- [x] No console errors.
 
 ## Definition Of Done
 
-- [ ] Health and ammo pickups work.
-- [ ] Pickups help survival without breaking difficulty.
+- [x] Health and ammo pickups work.
+- [x] Pickups help survival without breaking difficulty.
 
 ---
 
