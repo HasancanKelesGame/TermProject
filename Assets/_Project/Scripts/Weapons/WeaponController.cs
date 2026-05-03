@@ -38,6 +38,7 @@ namespace TermProject.Weapons
         private float reloadCompleteTime;
         private float muzzleLightOffTime;
         private bool reloading;
+        private bool inputEnabled = true;
 
         public WeaponData CurrentWeapon => currentWeapon;
         public int MagazineAmmo => magazineAmmo;
@@ -105,8 +106,28 @@ namespace TermProject.Weapons
             RefreshHud();
         }
 
+        public void SetInputEnabled(bool enabled)
+        {
+            inputEnabled = enabled;
+
+            if (!enabled)
+            {
+                reloading = false;
+
+                if (muzzleLight != null)
+                {
+                    muzzleLight.enabled = false;
+                }
+            }
+        }
+
         private void HandleInput()
         {
+            if (!inputEnabled)
+            {
+                return;
+            }
+
             if (Cursor.lockState != CursorLockMode.Locked)
             {
                 return;

@@ -49,7 +49,7 @@ namespace TermProject.Player
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (controlsEnabled && Input.GetKeyDown(KeyCode.Escape))
             {
                 SetCursorLocked(Cursor.lockState != CursorLockMode.Locked);
             }

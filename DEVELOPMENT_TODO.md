@@ -366,17 +366,17 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 - [x] Create `GameManager` singleton or scene-level manager.
 - [ ] Define game states:
   - [ ] MainMenu
-  - [ ] Playing
+  - [x] Playing
   - [ ] WaveComplete
   - [ ] Paused
-  - [ ] GameOver
+  - [x] GameOver
 - [x] Track current wave number.
 - [x] Track active bots.
 - [x] Track total kills.
 - [x] Track score.
 - [ ] Track elapsed survival time if needed.
 - [x] Add event hook for bot death.
-- [ ] Add event hook for player death.
+- [x] Add event hook for player death.
 
 ## Wave Spawning
 
@@ -411,14 +411,14 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 
 ## Game Over And Restart
 
-- [ ] Show game over UI.
-- [ ] Show final wave.
-- [ ] Show final kills.
-- [ ] Show final score.
-- [ ] Add restart button.
+- [x] Show game over UI.
+- [x] Show final wave.
+- [x] Show final kills.
+- [x] Show final score.
+- [x] Add restart button.
 - [ ] Add quit to menu button.
-- [ ] Reset player health/ammo on restart.
-- [ ] Clear active bots on restart.
+- [x] Reset player health/ammo on restart.
+- [x] Clear active bots on restart.
 
 ## Pause Menu
 
@@ -436,15 +436,15 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 - [x] Killing all bots completes wave.
 - [x] Wave number increases.
 - [x] Difficulty increases.
-- [ ] Player death shows game over.
-- [ ] Restart works from game over.
+- [x] Player death shows game over.
+- [x] Restart works from game over.
 - [x] No console errors.
 
 ## Definition Of Done
 
-- [ ] The game has a complete survival wave loop.
-- [ ] The player can play until death and restart.
-- [ ] Score, wave, and kills update correctly.
+- [x] The game has a complete survival wave loop.
+- [x] The player can play until death and restart.
+- [x] Score, wave, and kills update correctly.
 
 ---
 

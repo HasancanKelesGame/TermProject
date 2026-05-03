@@ -115,6 +115,29 @@ namespace TermProject.Game
             RefreshActiveBotCount();
         }
 
+        public void ClearActiveBots()
+        {
+            for (int i = activeBots.Count - 1; i >= 0; i--)
+            {
+                BotAI bot = activeBots[i];
+
+                if (bot != null)
+                {
+                    Damageable damageable = bot.GetComponent<Damageable>();
+
+                    if (damageable != null)
+                    {
+                        damageable.Died.RemoveListener(HandleTrackedBotDied);
+                    }
+
+                    Destroy(bot.gameObject);
+                }
+            }
+
+            activeBots.Clear();
+            RefreshActiveBotCount();
+        }
+
         private IEnumerator RunWaveLoop()
         {
             if (!HasRequiredSetup())
