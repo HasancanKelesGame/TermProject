@@ -56,6 +56,7 @@ namespace TermProject.AI
         private float patrolWaitUntil;
         private int patrolIndex;
         private bool initialized;
+        private bool deathRegistered;
 
         public BotState CurrentState => currentState;
 
@@ -362,6 +363,12 @@ namespace TermProject.AI
         private void HandleDeath()
         {
             ChangeState(BotState.Dead);
+
+            if (!deathRegistered)
+            {
+                deathRegistered = true;
+                GameManager.Instance?.RegisterBotDeath(this);
+            }
 
             if (destroyAfterDeath)
             {

@@ -265,7 +265,7 @@ Goal: Create one bot that navigates, detects the player, attacks, and dies.
 - [x] Add `Damageable` or `Health`.
 - [x] Add bot death handling.
 - [x] Add bot visual feedback on hit/death.
-- [ ] Create bot prefab.
+- [x] Create bot prefab.
 
 ## NavMesh Setup
 
@@ -335,7 +335,7 @@ Create `BotAI` using a simple finite state machine.
 
 - [x] Stop NavMeshAgent.
 - [x] Disable attacks.
-- [ ] Notify game manager of kill.
+- [x] Notify game manager of kill.
 - [x] Destroy or pool bot after delay.
 
 ## Bot Test
@@ -346,7 +346,7 @@ Create `BotAI` using a simple finite state machine.
 - [x] Bot chases player.
 - [x] Bot attacks player.
 - [x] Player can kill bot.
-- [ ] Bot death increases kill count.
+- [x] Bot death increases kill count.
 - [x] No console errors.
 
 ## Definition Of Done
@@ -363,19 +363,20 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 
 ## Game State
 
-- [ ] Create `GameManager` singleton or scene-level manager.
+- [x] Create `GameManager` singleton or scene-level manager.
 - [ ] Define game states:
   - [ ] MainMenu
   - [ ] Playing
   - [ ] WaveComplete
   - [ ] Paused
   - [ ] GameOver
-- [ ] Track current wave number.
+- [x] Track current wave number.
 - [ ] Track active bots.
-- [ ] Track total kills.
-- [ ] Track score.
+- [x] Track total kills.
+- [x] Track score.
 - [ ] Track elapsed survival time if needed.
-- [ ] Add event hooks for bot death and player death.
+- [x] Add event hook for bot death.
+- [ ] Add event hook for player death.
 
 ## Wave Spawning
 
@@ -403,10 +404,10 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 
 ## Score System
 
-- [ ] Add score per kill.
+- [x] Add score per kill.
 - [ ] Add bonus per completed wave if time permits.
 - [ ] Add survival time bonus if time permits.
-- [ ] Update HUD when score changes.
+- [x] Update HUD when score changes.
 
 ## Game Over And Restart
 
