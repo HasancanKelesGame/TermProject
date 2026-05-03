@@ -59,6 +59,23 @@ namespace TermProject.Game
             HealthChanged?.Invoke(currentHealth, maxHealth);
         }
 
+        public void SetMaxHealth(float value, bool resetToFullHealth)
+        {
+            maxHealth = Mathf.Max(1f, value);
+
+            if (resetToFullHealth)
+            {
+                dead = false;
+                currentHealth = maxHealth;
+            }
+            else
+            {
+                currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+            }
+
+            HealthChanged?.Invoke(currentHealth, maxHealth);
+        }
+
         private void Die()
         {
             if (dead)

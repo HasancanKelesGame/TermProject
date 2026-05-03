@@ -19,10 +19,12 @@ namespace TermProject.Game
         [SerializeField] private int scorePerKill = 100;
 
         private int currentWave;
+        private int activeBots;
         private int totalKills;
         private int score;
 
         public int CurrentWave => currentWave;
+        public int ActiveBots => activeBots;
         public int TotalKills => totalKills;
         public int Score => score;
 
@@ -70,9 +72,15 @@ namespace TermProject.Game
             RefreshHud();
         }
 
+        public void SetActiveBotCount(int count)
+        {
+            activeBots = Mathf.Max(0, count);
+        }
+
         public void ResetRun()
         {
             currentWave = Mathf.Max(1, startingWave);
+            activeBots = 0;
             totalKills = 0;
             score = 0;
             RefreshHud();

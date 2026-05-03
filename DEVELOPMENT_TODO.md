@@ -371,7 +371,7 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
   - [ ] Paused
   - [ ] GameOver
 - [x] Track current wave number.
-- [ ] Track active bots.
+- [x] Track active bots.
 - [x] Track total kills.
 - [x] Track score.
 - [ ] Track elapsed survival time if needed.
@@ -380,25 +380,25 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 
 ## Wave Spawning
 
-- [ ] Create `WaveManager`.
-- [ ] Add list of spawn points.
-- [ ] Add bot prefab reference.
-- [ ] Spawn wave 1 with small bot count.
-- [ ] Increase bot count per wave.
-- [ ] Increase bot health per wave if needed.
-- [ ] Increase bot accuracy/fire rate per wave if needed.
-- [ ] Increase bot movement speed per wave if needed.
-- [ ] Prevent spawning directly in front of player if possible.
-- [ ] Validate spawn position is on NavMesh.
-- [ ] Start next wave after short delay.
+- [x] Create `WaveManager`.
+- [x] Add list of spawn points.
+- [x] Add bot prefab reference.
+- [x] Spawn wave 1 with small bot count.
+- [x] Increase bot count per wave.
+- [x] Increase bot health per wave if needed.
+- [x] Increase bot fire rate per wave if needed.
+- [x] Increase bot movement speed per wave if needed.
+- [x] Prevent spawning directly in front of player if possible.
+- [x] Validate spawn position is on NavMesh.
+- [x] Start next wave after short delay.
 
 ## Difficulty Curve
 
-- [ ] Define wave 1 values.
-- [ ] Define max bot count.
-- [ ] Define bot health scaling.
-- [ ] Define bot damage scaling.
-- [ ] Define bot speed scaling.
+- [x] Define wave 1 values.
+- [x] Define max bot count.
+- [x] Define bot health scaling.
+- [x] Define bot damage scaling.
+- [x] Define bot speed scaling.
 - [ ] Keep difficulty fair for testing.
 - [ ] Document final tuning values in report notes.
 
@@ -431,14 +431,14 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 
 ## Wave System Test
 
-- [ ] Wave 1 starts.
-- [ ] Bots spawn at valid locations.
-- [ ] Killing all bots completes wave.
-- [ ] Wave number increases.
-- [ ] Difficulty increases.
+- [x] Wave 1 starts.
+- [x] Bots spawn at valid locations.
+- [x] Killing all bots completes wave.
+- [x] Wave number increases.
+- [x] Difficulty increases.
 - [ ] Player death shows game over.
 - [ ] Restart works from game over.
-- [ ] No console errors.
+- [x] No console errors.
 
 ## Definition Of Done
 

@@ -60,6 +60,45 @@ namespace TermProject.AI
 
         public BotState CurrentState => currentState;
 
+        public void ConfigureForWave(
+            Transform targetPlayer,
+            Damageable targetPlayerDamageable,
+            Transform[] sharedPatrolPoints,
+            float waveAttackDamage,
+            float waveAttackCooldown,
+            float waveMoveSpeed)
+        {
+            if (targetPlayer != null)
+            {
+                player = targetPlayer;
+            }
+
+            if (targetPlayerDamageable != null)
+            {
+                playerDamageable = targetPlayerDamageable;
+            }
+
+            if ((patrolPoints == null || patrolPoints.Length == 0) && sharedPatrolPoints != null)
+            {
+                patrolPoints = sharedPatrolPoints;
+            }
+
+            attackDamage = Mathf.Max(0f, waveAttackDamage);
+            attackCooldown = Mathf.Max(0.05f, waveAttackCooldown);
+            deathRegistered = false;
+
+            if (agent == null)
+            {
+                agent = GetComponent<NavMeshAgent>();
+            }
+
+            if (agent != null)
+            {
+                agent.speed = Mathf.Max(0.1f, waveMoveSpeed);
+                agent.stoppingDistance = stoppingDistance;
+            }
+        }
+
         private void Awake()
         {
             agent = GetComponent<NavMeshAgent>();
