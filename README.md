@@ -14,7 +14,7 @@ Singleplayer first-person arena deathmatch prototype built in Unity.
 - First-person player movement with mouse look, sprint, jump, and gravity.
 - Shared `Damageable` health component.
 - Simple arena scene with floor, perimeter walls, visual cover props, and colliders.
-- Hitscan rifle prototype with ammo, reload, muzzle flash, hit impact, recoil, view bob, and reload motion.
+- Hitscan rifle and semi-auto pistol with weapon switching, separate ammo, reload, muzzle flash, hit impact, recoil, view bob, and reload motion.
 - NavMesh-based test bot with finite-state patrol/detect/chase/attack/death behavior.
 - Reusable basic bot prefab with Synty character visual feedback.
 - Scene `GameManager` tracks wave, kills, and score; bot deaths update the HUD.
@@ -27,8 +27,10 @@ Singleplayer first-person arena deathmatch prototype built in Unity.
 
 - `WASD`: move
 - `Mouse`: look
-- `Left Mouse`: fire rifle
-- `R`: reload rifle
+- `Left Mouse`: fire current weapon
+- `R`: reload current weapon
+- `1` / `2`: switch weapon
+- `Mouse Wheel`: switch weapon
 - `Left Shift`: sprint
 - `Space`: jump
 - `Esc`: unlock/lock cursor
@@ -42,7 +44,7 @@ Gameplay code and project logic are original to this project. Imported packages 
 - Synty `POLYGON Starter Pack` / `POLYGON Generic` visual assets from the Unity Asset Store.
 - Imported Synty assets are used as visual/environment assets only.
 - Fun Assets `Guns Pack: Low Poly Guns Collection` visual weapon models/textures from the Unity Asset Store.
-- Imported weapon assets are used as visual rifle assets only.
+- Imported weapon assets are used as visual rifle/pistol assets only.
 - No imported `.cs`, `.asmdef`, `.asmref`, or `.dll` gameplay code is present under imported asset folders.
 - TextMesh Pro essentials are included for HUD text rendering.
 - Unity AI Navigation is included for NavMesh baking and navigation components.

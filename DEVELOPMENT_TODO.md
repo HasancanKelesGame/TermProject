@@ -505,15 +505,15 @@ Goal: Add weapon variety only after the first weapon and game loop work.
 
 ## Second Weapon
 
-- [ ] Decide second weapon type:
+- [x] Decide second weapon type:
   - [ ] Shotgun
-  - [ ] Pistol
+  - [x] Pistol
   - [ ] SMG
-- [ ] Create second `WeaponData`.
-- [ ] Create second weapon prefab or placeholder.
-- [ ] Implement weapon-specific behavior only if needed.
-- [ ] Add weapon switching support.
-- [ ] Update HUD correctly.
+- [x] Create second `WeaponData`.
+- [x] Create second weapon prefab or placeholder.
+- [x] Implement weapon-specific behavior only if needed.
+- [x] Add weapon switching support.
+- [x] Update HUD correctly.
 
 ## Weapon Balance
 
@@ -521,16 +521,16 @@ Goal: Add weapon variety only after the first weapon and game loop work.
 - [ ] Tune rifle fire rate.
 - [ ] Tune rifle magazine size.
 - [ ] Tune reload time.
-- [ ] Tune second weapon damage.
-- [ ] Tune second weapon fire rate.
-- [ ] Tune second weapon ammo.
-- [ ] Confirm both weapons have a reason to exist.
+- [x] Tune second weapon damage.
+- [x] Tune second weapon fire rate.
+- [x] Tune second weapon ammo.
+- [x] Confirm both weapons have a reason to exist.
 
 ## Definition Of Done
 
-- [ ] Player has 2 usable weapons.
-- [ ] Weapon switching is reliable.
-- [ ] Both weapons update ammo UI correctly.
+- [x] Player has 2 usable weapons.
+- [x] Weapon switching is reliable.
+- [x] Both weapons update ammo UI correctly.
 
 ---
 

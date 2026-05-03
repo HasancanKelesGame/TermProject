@@ -7,11 +7,64 @@ namespace TermProject.Weapons
     [DisallowMultipleComponent]
     public sealed class WeaponController : MonoBehaviour
     {
+        [System.Serializable]
+        public sealed class WeaponSlot
+        {
+            [SerializeField] private WeaponData weapon;
+            [SerializeField] private GameObject visualRoot;
+            [SerializeField] private Transform muzzleTransform;
+            [SerializeField] private bool automaticFire = true;
+
+            private int magazineAmmo;
+            private int reserveAmmo;
+            private bool initialized;
+
+            public WeaponData Weapon => weapon;
+            public GameObject VisualRoot => visualRoot;
+            public Transform MuzzleTransform => muzzleTransform;
+            public bool AutomaticFire => automaticFire;
+            public int MagazineAmmo => magazineAmmo;
+            public int ReserveAmmo => reserveAmmo;
+            public bool IsValid => weapon != null;
+
+            public void InitializeAmmo()
+            {
+                if (initialized || weapon == null)
+                {
+                    return;
+                }
+
+                magazineAmmo = weapon.MagazineSize;
+                reserveAmmo = weapon.StartingReserveAmmo;
+                initialized = true;
+            }
+
+            public void SetAmmo(int magazine, int reserve)
+            {
+                if (weapon == null)
+                {
+                    magazineAmmo = 0;
+                    reserveAmmo = 0;
+                    return;
+                }
+
+                magazineAmmo = Mathf.Clamp(magazine, 0, weapon.MagazineSize);
+                reserveAmmo = Mathf.Clamp(reserve, 0, weapon.MaxReserveAmmo);
+                initialized = true;
+            }
+        }
+
         [Header("References")]
         [SerializeField] private WeaponData startingWeapon;
         [SerializeField] private Camera aimCamera;
         [SerializeField] private HudController hudController;
         [SerializeField] private Transform muzzleTransform;
+
+        [Header("Weapon Slots")]
+        [SerializeField] private WeaponSlot[] weaponSlots;
+        [SerializeField] private int startingSlotIndex;
+        [SerializeField] private bool enableNumberKeySwitching = true;
+        [SerializeField] private bool enableScrollWheelSwitching = true;
 
         [Header("Hit Detection")]
         [SerializeField] private LayerMask hitLayers = ~0;
@@ -32,6 +85,8 @@ namespace TermProject.Weapons
         [SerializeField] private float debugRayDuration = 0.15f;
 
         private WeaponData currentWeapon;
+        private WeaponSlot currentSlot;
+        private int currentSlotIndex = -1;
         private int magazineAmmo;
         private int reserveAmmo;
         private float nextFireTime;
@@ -41,6 +96,7 @@ namespace TermProject.Weapons
         private bool inputEnabled = true;
 
         public WeaponData CurrentWeapon => currentWeapon;
+        public int CurrentSlotIndex => currentSlotIndex;
         public int MagazineAmmo => magazineAmmo;
         public int ReserveAmmo => reserveAmmo;
         public bool IsReloading => reloading;
@@ -65,7 +121,8 @@ namespace TermProject.Weapons
                 muzzleLight.enabled = false;
             }
 
-            EquipWeapon(startingWeapon);
+            InitializeWeaponSlots();
+            SelectInitialWeapon();
         }
 
         private void Start()
@@ -77,17 +134,33 @@ namespace TermProject.Weapons
         {
             UpdateEffectTimers();
 
-            if (currentWeapon == null || aimCamera == null)
+            if (aimCamera == null)
             {
                 return;
             }
 
-            UpdateReload();
+            if (currentWeapon != null)
+            {
+                UpdateReload();
+            }
+
             HandleInput();
         }
 
         public void EquipWeapon(WeaponData weaponData)
         {
+            int matchingSlotIndex = FindSlotIndex(weaponData);
+
+            if (matchingSlotIndex >= 0)
+            {
+                SelectSlot(matchingSlotIndex);
+                return;
+            }
+
+            SaveCurrentSlotAmmo();
+            SetAllSlotVisualsInactive();
+            currentSlot = null;
+            currentSlotIndex = -1;
             currentWeapon = weaponData;
             reloading = false;
             nextFireTime = 0f;
@@ -103,6 +176,33 @@ namespace TermProject.Weapons
 
             magazineAmmo = currentWeapon.MagazineSize;
             reserveAmmo = currentWeapon.StartingReserveAmmo;
+            RefreshHud();
+        }
+
+        public void SelectSlot(int slotIndex)
+        {
+            if (!IsSlotIndexValid(slotIndex) || currentSlotIndex == slotIndex)
+            {
+                return;
+            }
+
+            SaveCurrentSlotAmmo();
+
+            if (reloading)
+            {
+                reloading = false;
+                ReloadFinished?.Invoke();
+            }
+
+            currentSlotIndex = slotIndex;
+            currentSlot = weaponSlots[slotIndex];
+            currentSlot.InitializeAmmo();
+            currentWeapon = currentSlot.Weapon;
+            magazineAmmo = currentSlot.MagazineAmmo;
+            reserveAmmo = currentSlot.ReserveAmmo;
+            nextFireTime = 0f;
+            reloadCompleteTime = 0f;
+            SetActiveSlotVisual(slotIndex);
             RefreshHud();
         }
 
@@ -130,6 +230,7 @@ namespace TermProject.Weapons
 
             int previousReserve = reserveAmmo;
             reserveAmmo = Mathf.Min(currentWeapon.MaxReserveAmmo, reserveAmmo + amount);
+            SaveCurrentSlotAmmo();
             RefreshHud();
             return reserveAmmo - previousReserve;
         }
@@ -151,7 +252,14 @@ namespace TermProject.Weapons
                 return;
             }
 
-            bool firePressed = automaticFire ? Input.GetButton("Fire1") : Input.GetButtonDown("Fire1");
+            HandleWeaponSwitchInput();
+
+            if (currentWeapon == null)
+            {
+                return;
+            }
+
+            bool firePressed = CurrentWeaponUsesAutomaticFire() ? Input.GetButton("Fire1") : Input.GetButtonDown("Fire1");
 
             if (firePressed)
             {
@@ -179,6 +287,7 @@ namespace TermProject.Weapons
 
             nextFireTime = Time.time + currentWeapon.SecondsPerShot;
             magazineAmmo--;
+            SaveCurrentSlotAmmo();
             RefreshHud();
             PlayMuzzleEffects();
             ShotFired?.Invoke();
@@ -230,7 +339,8 @@ namespace TermProject.Weapons
 
         private Vector3 GetVisualShotOrigin()
         {
-            return muzzleTransform != null ? muzzleTransform.position : aimCamera.transform.position;
+            Transform activeMuzzle = GetActiveMuzzleTransform();
+            return activeMuzzle != null ? activeMuzzle.position : aimCamera.transform.position;
         }
 
         private void PlayMuzzleEffects()
@@ -293,9 +403,178 @@ namespace TermProject.Weapons
 
             magazineAmmo += loadedAmmo;
             reserveAmmo -= loadedAmmo;
+            SaveCurrentSlotAmmo();
             reloading = false;
             RefreshHud();
             ReloadFinished?.Invoke();
+        }
+
+        private void InitializeWeaponSlots()
+        {
+            if (weaponSlots == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < weaponSlots.Length; i++)
+            {
+                weaponSlots[i]?.InitializeAmmo();
+            }
+        }
+
+        private void SelectInitialWeapon()
+        {
+            int clampedStartingSlot = Mathf.Clamp(startingSlotIndex, 0, Mathf.Max(0, GetSlotCount() - 1));
+
+            if (IsSlotIndexValid(clampedStartingSlot))
+            {
+                SelectSlot(clampedStartingSlot);
+                return;
+            }
+
+            EquipWeapon(startingWeapon);
+        }
+
+        private void HandleWeaponSwitchInput()
+        {
+            if (enableNumberKeySwitching)
+            {
+                for (int i = 0; i < GetSlotCount() && i < 9; i++)
+                {
+                    if (Input.GetKeyDown((KeyCode)((int)KeyCode.Alpha1 + i)))
+                    {
+                        SelectSlot(i);
+                        return;
+                    }
+                }
+            }
+
+            if (!enableScrollWheelSwitching || GetSlotCount() <= 1)
+            {
+                return;
+            }
+
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+
+            if (scroll > 0.01f)
+            {
+                SelectNextSlot(1);
+            }
+            else if (scroll < -0.01f)
+            {
+                SelectNextSlot(-1);
+            }
+        }
+
+        private void SelectNextSlot(int direction)
+        {
+            int slotCount = GetSlotCount();
+
+            if (slotCount <= 0)
+            {
+                return;
+            }
+
+            int startIndex = currentSlotIndex >= 0 ? currentSlotIndex : 0;
+
+            for (int step = 1; step <= slotCount; step++)
+            {
+                int candidateIndex = (startIndex + direction * step + slotCount) % slotCount;
+
+                if (IsSlotIndexValid(candidateIndex))
+                {
+                    SelectSlot(candidateIndex);
+                    return;
+                }
+            }
+        }
+
+        private void SaveCurrentSlotAmmo()
+        {
+            if (currentSlot != null)
+            {
+                currentSlot.SetAmmo(magazineAmmo, reserveAmmo);
+            }
+        }
+
+        private void SetActiveSlotVisual(int slotIndex)
+        {
+            if (weaponSlots == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < weaponSlots.Length; i++)
+            {
+                GameObject visualRoot = weaponSlots[i]?.VisualRoot;
+
+                if (visualRoot != null)
+                {
+                    visualRoot.SetActive(i == slotIndex);
+                }
+            }
+        }
+
+        private void SetAllSlotVisualsInactive()
+        {
+            if (weaponSlots == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < weaponSlots.Length; i++)
+            {
+                GameObject visualRoot = weaponSlots[i]?.VisualRoot;
+
+                if (visualRoot != null)
+                {
+                    visualRoot.SetActive(false);
+                }
+            }
+        }
+
+        private bool CurrentWeaponUsesAutomaticFire()
+        {
+            return currentSlot != null ? currentSlot.AutomaticFire : automaticFire;
+        }
+
+        private Transform GetActiveMuzzleTransform()
+        {
+            return currentSlot != null && currentSlot.MuzzleTransform != null
+                ? currentSlot.MuzzleTransform
+                : muzzleTransform;
+        }
+
+        private int FindSlotIndex(WeaponData weaponData)
+        {
+            if (weaponData == null || weaponSlots == null)
+            {
+                return -1;
+            }
+
+            for (int i = 0; i < weaponSlots.Length; i++)
+            {
+                if (weaponSlots[i] != null && weaponSlots[i].Weapon == weaponData)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private bool IsSlotIndexValid(int slotIndex)
+        {
+            return weaponSlots != null
+                && slotIndex >= 0
+                && slotIndex < weaponSlots.Length
+                && weaponSlots[slotIndex] != null
+                && weaponSlots[slotIndex].IsValid;
+        }
+
+        private int GetSlotCount()
+        {
+            return weaponSlots == null ? 0 : weaponSlots.Length;
         }
 
         private void RefreshHud()
