@@ -370,7 +370,7 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
   - [ ] MainMenu
   - [x] Playing
   - [ ] WaveComplete
-  - [ ] Paused
+  - [x] Paused
   - [x] GameOver
 - [x] Track current wave number.
 - [x] Track active bots.
@@ -424,11 +424,11 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 
 ## Pause Menu
 
-- [ ] Add pause input.
-- [ ] Pause time scale.
-- [ ] Show pause UI.
-- [ ] Resume button.
-- [ ] Restart button.
+- [x] Add pause input.
+- [x] Pause time scale.
+- [x] Show pause UI.
+- [x] Resume button.
+- [x] Restart button.
 - [ ] Quit button if needed.
 
 ## Wave System Test

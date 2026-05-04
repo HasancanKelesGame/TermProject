@@ -13,6 +13,7 @@ namespace TermProject.Game
         public enum GameState
         {
             Playing,
+            Paused,
             GameOver
         }
 
@@ -21,6 +22,7 @@ namespace TermProject.Game
         [Header("References")]
         [SerializeField] private HudController hudController;
         [SerializeField] private GameOverMenuController gameOverMenu;
+        [SerializeField] private PauseMenuController pauseMenu;
         [SerializeField] private WaveManager waveManager;
         [SerializeField] private Damageable playerHealth;
         [SerializeField] private PlayerController playerController;
@@ -70,6 +72,11 @@ namespace TermProject.Game
                 gameOverMenu = FindFirstObjectByType<GameOverMenuController>(FindObjectsInactive.Include);
             }
 
+            if (pauseMenu == null)
+            {
+                pauseMenu = FindFirstObjectByType<PauseMenuController>(FindObjectsInactive.Include);
+            }
+
             if (waveManager == null)
             {
                 waveManager = FindFirstObjectByType<WaveManager>();
@@ -104,6 +111,7 @@ namespace TermProject.Game
             audioSource.spatialBlend = 0f;
 
             gameOverMenu?.SetGameManager(this);
+            pauseMenu?.SetGameManager(this);
             currentWave = Mathf.Max(1, startingWave);
             Time.timeScale = 1f;
         }
@@ -113,9 +121,19 @@ namespace TermProject.Game
             currentState = GameState.Playing;
             SubscribeToPlayerDeath();
             gameOverMenu?.Hide();
+            pauseMenu?.Hide();
             playerController?.SetControlsEnabled(true);
+            playerController?.SetCursorLocked(true);
             weaponController?.SetInputEnabled(true);
             RefreshHud();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                TogglePause();
+            }
         }
 
         private void OnDestroy()
@@ -151,6 +169,50 @@ namespace TermProject.Game
             activeBots = Mathf.Max(0, count);
         }
 
+        public void TogglePause()
+        {
+            if (currentState == GameState.Playing)
+            {
+                PauseGame();
+                return;
+            }
+
+            if (currentState == GameState.Paused)
+            {
+                ResumeGame();
+            }
+        }
+
+        public void PauseGame()
+        {
+            if (currentState != GameState.Playing)
+            {
+                return;
+            }
+
+            currentState = GameState.Paused;
+            Time.timeScale = 0f;
+            playerController?.SetControlsEnabled(false, false);
+            playerController?.SetCursorLocked(false);
+            weaponController?.SetInputEnabled(false);
+            pauseMenu?.Show();
+        }
+
+        public void ResumeGame()
+        {
+            if (currentState != GameState.Paused)
+            {
+                return;
+            }
+
+            currentState = GameState.Playing;
+            Time.timeScale = 1f;
+            pauseMenu?.Hide();
+            playerController?.SetControlsEnabled(true);
+            playerController?.SetCursorLocked(true);
+            weaponController?.SetInputEnabled(true);
+        }
+
         public void ResetRun()
         {
             currentState = GameState.Playing;
@@ -160,6 +222,7 @@ namespace TermProject.Game
             score = 0;
             Time.timeScale = 1f;
             gameOverMenu?.Hide();
+            pauseMenu?.Hide();
             playerHealth?.ResetHealth();
             playerController?.SetControlsEnabled(true);
             playerController?.SetCursorLocked(true);
@@ -191,6 +254,7 @@ namespace TermProject.Game
 
             currentState = GameState.GameOver;
             waveManager?.StopWaves();
+            pauseMenu?.Hide();
             playerController?.SetControlsEnabled(false);
             playerController?.SetCursorLocked(false);
             weaponController?.SetInputEnabled(false);

@@ -87,11 +87,6 @@ namespace TermProject.Player
 
         private void Update()
         {
-            if (controlsEnabled && Input.GetKeyDown(KeyCode.Escape))
-            {
-                SetCursorLocked(Cursor.lockState != CursorLockMode.Locked);
-            }
-
             if (!controlsEnabled)
             {
                 return;
@@ -101,13 +96,17 @@ namespace TermProject.Player
             Move();
         }
 
-        public void SetControlsEnabled(bool enabled)
+        public void SetControlsEnabled(bool enabled, bool resetVerticalVelocity = true)
         {
             controlsEnabled = enabled;
 
             if (!enabled)
             {
-                verticalVelocity = 0f;
+                if (resetVerticalVelocity)
+                {
+                    verticalVelocity = 0f;
+                }
+
                 StopMovementLoop();
             }
         }
