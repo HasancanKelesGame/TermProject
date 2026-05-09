@@ -14,6 +14,7 @@ namespace TermProject.UI
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text finalStatsText;
         [SerializeField] private Button restartButton;
+        [SerializeField] private Button mainMenuButton;
         [SerializeField] private AudioSource audioSource;
         [SerializeField] private AudioClip buttonClickSound;
         [SerializeField, Range(0f, 1f)] private float buttonClickVolume = 0.7f;
@@ -52,6 +53,11 @@ namespace TermProject.UI
             {
                 restartButton.onClick.AddListener(Restart);
             }
+
+            if (mainMenuButton != null)
+            {
+                mainMenuButton.onClick.AddListener(ReturnToMainMenu);
+            }
         }
 
         private void OnDisable()
@@ -59,6 +65,11 @@ namespace TermProject.UI
             if (restartButton != null)
             {
                 restartButton.onClick.RemoveListener(Restart);
+            }
+
+            if (mainMenuButton != null)
+            {
+                mainMenuButton.onClick.RemoveListener(ReturnToMainMenu);
             }
         }
 
@@ -105,12 +116,18 @@ namespace TermProject.UI
                 return;
             }
 
-            if (gameManager == null)
+            GetGameManager()?.RestartCurrentScene();
+        }
+
+        public void ReturnToMainMenu()
+        {
+            if (buttonClickSound != null && audioSource != null)
             {
-                gameManager = GameManager.Instance;
+                StartCoroutine(ReturnToMainMenuAfterButtonSound());
+                return;
             }
 
-            gameManager?.RestartCurrentScene();
+            GetGameManager()?.LoadMainMenu();
         }
 
         private IEnumerator RestartAfterButtonSound()
@@ -120,12 +137,27 @@ namespace TermProject.UI
             float delay = Mathf.Clamp(buttonClickSound.length, 0.05f, 0.25f);
             yield return new WaitForSecondsRealtime(delay);
 
+            GetGameManager()?.RestartCurrentScene();
+        }
+
+        private IEnumerator ReturnToMainMenuAfterButtonSound()
+        {
+            audioSource.PlayOneShot(buttonClickSound, buttonClickVolume);
+
+            float delay = Mathf.Clamp(buttonClickSound.length, 0.05f, 0.25f);
+            yield return new WaitForSecondsRealtime(delay);
+
+            GetGameManager()?.LoadMainMenu();
+        }
+
+        private GameManager GetGameManager()
+        {
             if (gameManager == null)
             {
                 gameManager = GameManager.Instance;
             }
 
-            gameManager?.RestartCurrentScene();
+            return gameManager;
         }
 
         private void EnsurePanel()

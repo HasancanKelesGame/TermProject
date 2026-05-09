@@ -33,6 +33,9 @@ namespace TermProject.Game
         [SerializeField] private AudioClip playerDeathSound;
         [SerializeField, Range(0f, 1f)] private float playerDeathVolume = 0.8f;
 
+        [Header("Scenes")]
+        [SerializeField] private string mainMenuSceneName = "Main_Menu";
+
         [Header("Run State")]
         [SerializeField] private int startingWave = 1;
 
@@ -243,6 +246,12 @@ namespace TermProject.Game
             {
                 SceneManager.LoadScene(activeScene.name);
             }
+        }
+
+        public void LoadMainMenu()
+        {
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(mainMenuSceneName);
         }
 
         private void HandlePlayerDied()

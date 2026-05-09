@@ -51,7 +51,6 @@ namespace TermProject.Game
         [Header("Debug")]
         [SerializeField] private int currentWave;
         [SerializeField] private int activeBotCount;
-        [SerializeField] private bool spawningWave;
 
         private readonly List<BotAI> activeBots = new List<BotAI>();
         private Coroutine waveRoutine;
@@ -111,7 +110,6 @@ namespace TermProject.Game
                 waveRoutine = null;
             }
 
-            spawningWave = false;
             RefreshActiveBotCount();
         }
 
@@ -176,7 +174,6 @@ namespace TermProject.Game
 
         private IEnumerator SpawnWave(int wave)
         {
-            spawningWave = true;
             gameManager?.SetWave(wave);
 
             int botCount = GetBotCountForWave(wave);
@@ -192,7 +189,6 @@ namespace TermProject.Game
                 }
             }
 
-            spawningWave = false;
             RefreshActiveBotCount();
         }
 

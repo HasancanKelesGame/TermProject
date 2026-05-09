@@ -565,7 +565,7 @@ Goal: Make the game understandable and presentable.
 - [x] Final wave displayed.
 - [x] Final kill count displayed.
 - [x] Restart button works.
-- [ ] Main menu button works.
+- [x] Main menu button works.
 
 ## Audio
 

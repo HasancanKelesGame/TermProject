@@ -14,6 +14,7 @@ namespace TermProject.UI
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private Button resumeButton;
         [SerializeField] private Button restartButton;
+        [SerializeField] private Button mainMenuButton;
         [SerializeField] private AudioSource audioSource;
         [SerializeField] private AudioClip buttonClickSound;
         [SerializeField, Range(0f, 1f)] private float buttonClickVolume = 0.7f;
@@ -54,6 +55,11 @@ namespace TermProject.UI
             {
                 restartButton.onClick.AddListener(Restart);
             }
+
+            if (mainMenuButton != null)
+            {
+                mainMenuButton.onClick.AddListener(ReturnToMainMenu);
+            }
         }
 
         private void OnDisable()
@@ -66,6 +72,11 @@ namespace TermProject.UI
             if (restartButton != null)
             {
                 restartButton.onClick.RemoveListener(Restart);
+            }
+
+            if (mainMenuButton != null)
+            {
+                mainMenuButton.onClick.RemoveListener(ReturnToMainMenu);
             }
         }
 
@@ -116,6 +127,17 @@ namespace TermProject.UI
             GetGameManager()?.RestartCurrentScene();
         }
 
+        public void ReturnToMainMenu()
+        {
+            if (buttonClickSound != null && audioSource != null)
+            {
+                StartCoroutine(ReturnToMainMenuAfterButtonSound());
+                return;
+            }
+
+            GetGameManager()?.LoadMainMenu();
+        }
+
         private IEnumerator RestartAfterButtonSound()
         {
             PlayButtonClick();
@@ -124,6 +146,16 @@ namespace TermProject.UI
             yield return new WaitForSecondsRealtime(delay);
 
             GetGameManager()?.RestartCurrentScene();
+        }
+
+        private IEnumerator ReturnToMainMenuAfterButtonSound()
+        {
+            PlayButtonClick();
+
+            float delay = Mathf.Clamp(buttonClickSound.length, 0.05f, 0.25f);
+            yield return new WaitForSecondsRealtime(delay);
+
+            GetGameManager()?.LoadMainMenu();
         }
 
         private void PlayButtonClick()

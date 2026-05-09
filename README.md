@@ -22,8 +22,8 @@ Singleplayer first-person arena deathmatch prototype built in Unity.
 - Reusable basic bot prefab with Synty character visual feedback.
 - Scene `GameManager` tracks wave, kills, and score; bot deaths update the HUD.
 - `WaveManager` spawns bots from configured spawn points, tracks active bots, advances waves, and scales count/health/damage/speed.
-- Player death stops the run, shows final wave/kills/score, unlocks the cursor, and supports restarting the scene.
-- Pause menu freezes gameplay, unlocks the cursor, and supports resume/restart.
+- Player death stops the run, shows final wave/kills/score, unlocks the cursor, and supports restarting or returning to the main menu.
+- Pause menu freezes gameplay, unlocks the cursor, and supports resume, restart, or returning to the main menu.
 - Health and ammo pickups restore player resources, hide when collected, and respawn after a short delay.
 - Main menu scene provides Play/Quit entry flow and Build Settings scene order.
 - Imported visual assets are used only for presentation.
