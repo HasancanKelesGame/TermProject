@@ -647,14 +647,14 @@ Goal: Collect required profiler metrics and fix obvious performance problems.
 
 ## Profiling Setup
 
-- [ ] Open Unity Profiler.
+- [x] Open Unity Profiler.
 - [x] Profile in Play Mode with the custom `PerformanceLogger`.
 - [x] Profile during peak combat with waves active.
 - [x] Record target hardware/specs.
 - [x] Capture FPS/frame time.
-- [ ] Capture CPU usage.
+- [x] Capture CPU usage.
 - [x] Capture memory allocation.
-- [ ] Capture GC allocation if visible.
+- [x] Capture GC allocation if visible.
 
 ## Performance Risks To Check
 
@@ -679,7 +679,7 @@ Goal: Collect required profiler metrics and fix obvious performance problems.
 
 - [x] Note average FPS during normal combat.
 - [x] Note lowest FPS during peak combat.
-- [ ] Note main CPU bottleneck.
+- [x] Note main CPU bottleneck/observation.
 - [x] Note memory allocation observations.
 - [x] Note at least one optimization made.
 - [ ] Add screenshots if required by instructor.
@@ -687,7 +687,7 @@ Goal: Collect required profiler metrics and fix obvious performance problems.
 ## Definition Of Done
 
 - [x] Profiler data is collected.
-- [ ] Major bottlenecks are documented.
+- [x] Major bottlenecks are documented.
 - [x] At least one optimization decision is explained.
 
 ---

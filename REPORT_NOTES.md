@@ -60,7 +60,7 @@ Use this file while testing/profiling, then copy the final content into the subm
 
 ## Profiler Metrics
 
-Source: custom `PerformanceLogger` CSV generated from Unity Editor Play Mode on May 9, 2026. The Game view was uncapped, so FPS values are mainly useful as evidence that the current arena load is light. Final submission can still include Unity Profiler CPU/GC screenshots if required by the instructor.
+Source: custom `PerformanceLogger` CSV generated from Unity Editor Play Mode on May 9, 2026. The Game view was uncapped, so FPS values are mainly useful as evidence that the current arena load is light. The logger samples frame time, main-thread CPU time through `ProfilerRecorder`, GC allocation per frame, and memory usage.
 
 - Test machine:
   - Mac model: MacBook Pro (Mac16,8).
@@ -69,21 +69,21 @@ Source: custom `PerformanceLogger` CSV generated from Unity Editor Play Mode on 
   - RAM: 24 GB.
 - Unity play mode or build: Unity Editor Play Mode.
 - Target resolution: Game view Free Aspect for this capture.
-- Capture length: 52 samples across about 56 seconds.
+- Capture length: 98 samples across about 99 seconds.
 - Normal combat:
-  - Average FPS: 1482.9.
-  - Approx frame time: most sampled averages were about 0.63-0.72 ms.
-  - Main CPU cost: not captured by the CSV logger; verify with Unity Profiler CPU hierarchy for final submission.
-  - Memory used: about 515-535 MB allocated during capture.
-  - GC allocations: not captured by the CSV logger; verify with Unity Profiler Memory/GC if required.
+  - Average FPS: 1937.2.
+  - Approx frame time: most sampled averages were about 0.45-0.57 ms.
+  - Main CPU cost: normally about 0.4-0.9 ms sampled main-thread time; highest sampled value was 5.54 ms.
+  - Memory used: about 514-517 MB allocated during capture.
+  - GC allocations: normally about 7.4 KB/frame sampled; highest sampled value was 10.917 KB/frame.
 - Peak combat:
-  - Wave tested: wave 5 reached.
+  - Wave tested: wave 6 reached.
   - Active bot count: 4 active bots.
-  - Lowest FPS: 434.6.
-  - Approx frame time: 2.301 ms for the lowest-FPS sample; one early single-frame spike reached 69.632 ms.
-  - Main CPU cost: no bottleneck was visible from FPS logging at the current bot cap; CPU hierarchy still needs Profiler confirmation.
-  - Memory used: highest allocated memory was 535.261 MB.
-  - GC allocations: not captured by the CSV logger.
+  - Lowest FPS: 880.3.
+  - Approx frame time: 1.136 ms for the lowest-FPS sample; one early single-frame spike reached 66.725 ms.
+  - Main CPU cost: highest sampled main-thread CPU time was 5.54 ms, with normal combat samples staying far below the 16.67 ms budget for 60 FPS.
+  - Memory used: highest allocated memory was 516.828 MB.
+  - GC allocations: highest sampled GC allocation was 10.917 KB/frame.
 
 ## Optimization Notes
 
@@ -95,9 +95,9 @@ Source: custom `PerformanceLogger` CSV generated from Unity Editor Play Mode on 
 
 Add profiler-driven decision:
 
-- Observed bottleneck: no gameplay bottleneck appeared during the logged run. The game reached wave 5 with 4 active bots, and the lowest sampled FPS remained above 400.
+- Observed bottleneck: no gameplay bottleneck appeared during the logged run. The game reached wave 6 with 4 active bots, and the lowest sampled FPS remained above 800.
 - Change made or design decision: keep active bot count capped, continue using hitscan weapons, update HUD text only when values change, and defer pooling unless Unity Profiler later shows instantiate/destroy spikes at higher wave counts.
-- Result: current scope has enough performance headroom for the final project; the remaining profiling task is to capture CPU/GC evidence from Unity Profiler if the final report requires screenshots.
+- Result: current scope has enough performance headroom for the final project. Main-thread CPU time, memory use, and GC allocation all stayed low for the required arena scale.
 
 ## Asset And Audio Credits
 

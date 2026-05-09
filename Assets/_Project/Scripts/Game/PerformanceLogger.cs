@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -31,9 +32,15 @@ namespace TermProject.Game
         private float fpsSum;
         private float lowestFps = float.MaxValue;
         private float highestFrameMs;
+        private float highestMainThreadMs;
+        private float highestGcAllocKb;
         private long highestAllocatedMemory;
         private int highestActiveBots;
         private int highestWave;
+        private bool capturedMainThreadTime;
+        private bool capturedGcAlloc;
+        private ProfilerRecorder mainThreadTimeRecorder;
+        private ProfilerRecorder gcAllocatedInFrameRecorder;
 
         private void Awake()
         {
@@ -41,6 +48,11 @@ namespace TermProject.Game
             {
                 gameManager = GameManager.Instance ?? FindFirstObjectByType<GameManager>();
             }
+        }
+
+        private void OnEnable()
+        {
+            StartProfilerRecorders();
         }
 
         private void Start()
@@ -86,6 +98,7 @@ namespace TermProject.Game
         private void OnDisable()
         {
             StopLogging();
+            DisposeProfilerRecorders();
         }
 
         private void OnApplicationQuit()
@@ -105,7 +118,7 @@ namespace TermProject.Game
             csvPath = Path.Combine(Application.persistentDataPath, $"TermProject_Performance_{timestamp}.csv");
             summaryPath = Path.Combine(Application.persistentDataPath, $"TermProject_Performance_{timestamp}_summary.txt");
             csvWriter = new StreamWriter(csvPath);
-            csvWriter.WriteLine("time_seconds,wave,active_bots,fps,avg_frame_ms,min_frame_ms,max_frame_ms,allocated_mb,reserved_mb,mono_mb");
+            csvWriter.WriteLine("time_seconds,wave,active_bots,fps,avg_frame_ms,min_frame_ms,max_frame_ms,main_thread_ms,gc_alloc_kb,allocated_mb,reserved_mb,mono_mb");
 
             logging = true;
             ResetStats();
@@ -147,6 +160,8 @@ namespace TermProject.Game
             long allocated = Profiler.GetTotalAllocatedMemoryLong();
             long reserved = Profiler.GetTotalReservedMemoryLong();
             long mono = Profiler.GetMonoUsedSizeLong();
+            float mainThreadMs = GetRecorderMilliseconds(mainThreadTimeRecorder);
+            float gcAllocKb = GetRecorderKilobytes(gcAllocatedInFrameRecorder);
 
             csvWriter.WriteLine(string.Join(
                 ",",
@@ -157,6 +172,8 @@ namespace TermProject.Game
                 Format(avgFrameMs),
                 Format(frameMsMin),
                 Format(frameMsMax),
+                FormatOptional(mainThreadMs),
+                FormatOptional(gcAllocKb),
                 Format(ToMegabytes(allocated)),
                 Format(ToMegabytes(reserved)),
                 Format(ToMegabytes(mono))));
@@ -166,6 +183,8 @@ namespace TermProject.Game
             fpsSum += fps;
             lowestFps = Mathf.Min(lowestFps, fps);
             highestFrameMs = Mathf.Max(highestFrameMs, frameMsMax);
+            TrackHighestOptional(mainThreadMs, ref highestMainThreadMs, ref capturedMainThreadTime);
+            TrackHighestOptional(gcAllocKb, ref highestGcAllocKb, ref capturedGcAlloc);
             highestAllocatedMemory = Math.Max(highestAllocatedMemory, allocated);
             highestActiveBots = Mathf.Max(highestActiveBots, activeBots);
             highestWave = Mathf.Max(highestWave, wave);
@@ -184,6 +203,8 @@ namespace TermProject.Game
                 summaryWriter.WriteLine($"Average FPS: {Format(averageFps)}");
                 summaryWriter.WriteLine($"Lowest sampled FPS: {Format(finalLowestFps)}");
                 summaryWriter.WriteLine($"Highest sampled frame time ms: {Format(highestFrameMs)}");
+                summaryWriter.WriteLine($"Highest sampled main thread CPU ms: {FormatOptional(highestMainThreadMs, capturedMainThreadTime)}");
+                summaryWriter.WriteLine($"Highest sampled GC alloc KB/frame: {FormatOptional(highestGcAllocKb, capturedGcAlloc)}");
                 summaryWriter.WriteLine($"Highest wave reached: {highestWave}");
                 summaryWriter.WriteLine($"Highest active bot count: {highestActiveBots}");
                 summaryWriter.WriteLine($"Highest allocated memory MB: {Format(ToMegabytes(highestAllocatedMemory))}");
@@ -203,9 +224,13 @@ namespace TermProject.Game
             fpsSum = 0f;
             lowestFps = float.MaxValue;
             highestFrameMs = 0f;
+            highestMainThreadMs = 0f;
+            highestGcAllocKb = 0f;
             highestAllocatedMemory = 0;
             highestActiveBots = 0;
             highestWave = 0;
+            capturedMainThreadTime = false;
+            capturedGcAlloc = false;
             ResetSample();
         }
 
@@ -218,9 +243,73 @@ namespace TermProject.Game
             frameMsMax = 0f;
         }
 
+        private void StartProfilerRecorders()
+        {
+#if ENABLE_PROFILER
+            TryStartRecorder(ref mainThreadTimeRecorder, ProfilerCategory.Internal, "Main Thread");
+            TryStartRecorder(ref gcAllocatedInFrameRecorder, ProfilerCategory.Memory, "GC Allocated In Frame");
+#endif
+        }
+
+        private void DisposeProfilerRecorders()
+        {
+            if (mainThreadTimeRecorder.Valid)
+            {
+                mainThreadTimeRecorder.Dispose();
+            }
+
+            if (gcAllocatedInFrameRecorder.Valid)
+            {
+                gcAllocatedInFrameRecorder.Dispose();
+            }
+        }
+
+        private static void TryStartRecorder(ref ProfilerRecorder recorder, ProfilerCategory category, string statName)
+        {
+            if (recorder.Valid)
+            {
+                return;
+            }
+
+            try
+            {
+                recorder = ProfilerRecorder.StartNew(category, statName);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning($"PerformanceLogger could not start profiler recorder '{statName}': {exception.Message}");
+            }
+        }
+
+        private static float GetRecorderMilliseconds(ProfilerRecorder recorder)
+        {
+            return recorder.Valid ? recorder.LastValue * 0.000001f : float.NaN;
+        }
+
+        private static float GetRecorderKilobytes(ProfilerRecorder recorder)
+        {
+            return recorder.Valid ? recorder.LastValue / 1024f : float.NaN;
+        }
+
+        private static void TrackHighestOptional(float value, ref float highestValue, ref bool capturedValue)
+        {
+            if (float.IsNaN(value) || float.IsInfinity(value))
+            {
+                return;
+            }
+
+            capturedValue = true;
+            highestValue = Mathf.Max(highestValue, value);
+        }
+
         private static float ToMegabytes(long bytes)
         {
             return bytes / (1024f * 1024f);
+        }
+
+        private static string FormatOptional(float value, bool capturedValue = true)
+        {
+            return capturedValue && !float.IsNaN(value) && !float.IsInfinity(value) ? Format(value) : "n/a";
         }
 
         private static string Format(float value)
