@@ -9,6 +9,7 @@ Singleplayer first-person arena deathmatch prototype built in Unity.
 - Main scene: `Assets/_Project/Scenes/Arena_Main.unity`
 - Project source folder: `Assets/_Project`
 - Development checklist: `DEVELOPMENT_TODO.md`
+- Report/profiling notes: `REPORT_NOTES.md`
 
 ## Current State
 
