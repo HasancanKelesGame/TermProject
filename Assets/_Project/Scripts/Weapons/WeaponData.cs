@@ -14,6 +14,20 @@ namespace TermProject.Weapons
         [SerializeField] private float fireRate = 7.5f;
         [SerializeField] private float spreadAngle = 0.4f;
 
+        [Header("Spray")]
+        [SerializeField] private float spreadIncreasePerShot;
+        [SerializeField] private float maxSpreadAngle = 0.4f;
+        [SerializeField] private float spreadRecoverySpeed = 6f;
+
+        [Header("View Recoil")]
+        [SerializeField] private float recoilPositionMultiplier = 1f;
+        [SerializeField] private float recoilRotationMultiplier = 1f;
+
+        [Header("Crosshair Recoil")]
+        [SerializeField] private float crosshairKickPixels = 3f;
+        [SerializeField] private float maxCrosshairLiftPixels = 16f;
+        [SerializeField] private float crosshairReturnSpeed = 55f;
+
         [Header("Ammo")]
         [SerializeField] private int magazineSize = 30;
         [SerializeField] private int startingReserveAmmo = 90;
@@ -31,6 +45,14 @@ namespace TermProject.Weapons
         public float Range => Mathf.Max(1f, range);
         public float FireRate => Mathf.Max(0.1f, fireRate);
         public float SpreadAngle => Mathf.Max(0f, spreadAngle);
+        public float SpreadIncreasePerShot => Mathf.Max(0f, spreadIncreasePerShot);
+        public float MaxSpreadAngle => Mathf.Max(SpreadAngle, maxSpreadAngle);
+        public float SpreadRecoverySpeed => Mathf.Max(0f, spreadRecoverySpeed);
+        public float RecoilPositionMultiplier => Mathf.Max(0f, recoilPositionMultiplier);
+        public float RecoilRotationMultiplier => Mathf.Max(0f, recoilRotationMultiplier);
+        public float CrosshairKickPixels => Mathf.Max(0f, crosshairKickPixels);
+        public float MaxCrosshairLiftPixels => Mathf.Max(0f, maxCrosshairLiftPixels);
+        public float CrosshairReturnSpeed => Mathf.Max(0f, crosshairReturnSpeed);
         public int MagazineSize => Mathf.Max(1, magazineSize);
         public int StartingReserveAmmo => Mathf.Max(0, startingReserveAmmo);
         public int MaxReserveAmmo => Mathf.Max(StartingReserveAmmo, maxReserveAmmo);

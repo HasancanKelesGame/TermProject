@@ -216,8 +216,17 @@ namespace TermProject.Weapons
 
         private void AddRecoil()
         {
-            recoilPositionOffset = Vector3.ClampMagnitude(recoilPositionOffset + recoilPositionKick, maxRecoilPosition);
-            recoilRotationOffset = Vector3.ClampMagnitude(recoilRotationOffset + recoilRotationKick, maxRecoilRotation);
+            WeaponData weapon = weaponController != null ? weaponController.CurrentWeapon : null;
+            float positionMultiplier = weapon != null ? weapon.RecoilPositionMultiplier : 1f;
+            float rotationMultiplier = weapon != null ? weapon.RecoilRotationMultiplier : 1f;
+
+            recoilPositionOffset = Vector3.ClampMagnitude(
+                recoilPositionOffset + recoilPositionKick * positionMultiplier,
+                maxRecoilPosition);
+
+            recoilRotationOffset = Vector3.ClampMagnitude(
+                recoilRotationOffset + recoilRotationKick * rotationMultiplier,
+                maxRecoilRotation);
         }
 
         private Vector3 CalculateReloadPosition()

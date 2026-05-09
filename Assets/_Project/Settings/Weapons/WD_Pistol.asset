@@ -16,7 +16,15 @@ MonoBehaviour:
   damage: 18
   range: 55
   fireRate: 4
-  spreadAngle: 0.8
+  spreadAngle: 0.45
+  spreadIncreasePerShot: 0
+  maxSpreadAngle: 0.45
+  spreadRecoverySpeed: 8
+  recoilPositionMultiplier: 1.35
+  recoilRotationMultiplier: 1.8
+  crosshairKickPixels: 7
+  maxCrosshairLiftPixels: 20
+  crosshairReturnSpeed: 65
   magazineSize: 12
   startingReserveAmmo: 48
   maxReserveAmmo: 72

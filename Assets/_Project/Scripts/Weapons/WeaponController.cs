@@ -104,6 +104,7 @@ namespace TermProject.Weapons
         private float reloadCompleteTime;
         private float muzzleLightOffTime;
         private float automaticFireStopTime = -1f;
+        private float additionalSpreadAngle;
         private bool reloading;
         private bool inputEnabled = true;
         private bool automaticFireSoundActive;
@@ -175,6 +176,7 @@ namespace TermProject.Weapons
         {
             UpdateEffectTimers();
             UpdateAutomaticFireSound();
+            UpdateSpreadRecovery();
 
             if (aimCamera == null)
             {
@@ -208,6 +210,7 @@ namespace TermProject.Weapons
             reloading = false;
             nextFireTime = 0f;
             reloadCompleteTime = 0f;
+            additionalSpreadAngle = 0f;
 
             if (currentWeapon == null)
             {
@@ -251,6 +254,7 @@ namespace TermProject.Weapons
             reserveAmmo = currentSlot.ReserveAmmo;
             nextFireTime = 0f;
             reloadCompleteTime = 0f;
+            additionalSpreadAngle = 0f;
             SetActiveSlotVisual(slotIndex);
             RefreshHud();
 
@@ -267,6 +271,7 @@ namespace TermProject.Weapons
             if (!enabled)
             {
                 reloading = false;
+                additionalSpreadAngle = 0f;
                 StopAutomaticFireSoundNow();
 
                 if (muzzleLight != null)
@@ -348,7 +353,9 @@ namespace TermProject.Weapons
             PlayFireSound();
             ShotFired?.Invoke();
 
-            Ray shotRay = GetShotRay();
+            float shotSpreadAngle = GetCurrentSpreadAngle();
+            Ray shotRay = GetShotRay(shotSpreadAngle);
+            AddShotSpread();
 
             if (!Physics.Raycast(shotRay, out RaycastHit hit, currentWeapon.Range, hitLayers, QueryTriggerInteraction.Ignore))
             {
@@ -376,10 +383,9 @@ namespace TermProject.Weapons
             }
         }
 
-        private Ray GetShotRay()
+        private Ray GetShotRay(float spread)
         {
             Vector3 direction = aimCamera.transform.forward;
-            float spread = currentWeapon.SpreadAngle;
 
             if (spread > 0f)
             {
@@ -445,6 +451,7 @@ namespace TermProject.Weapons
 
             reloading = true;
             reloadCompleteTime = Time.time + currentWeapon.ReloadTime;
+            additionalSpreadAngle = 0f;
             StopAutomaticFireSoundNow();
             PlaySound(currentWeapon.ReloadSound, currentWeapon.ReloadVolume);
             ReloadStarted?.Invoke(currentWeapon.ReloadTime);
@@ -650,6 +657,55 @@ namespace TermProject.Weapons
             }
 
             hudController.SetAmmo(magazineAmmo, reserveAmmo);
+        }
+
+        private float GetCurrentSpreadAngle()
+        {
+            if (currentWeapon == null)
+            {
+                return 0f;
+            }
+
+            return Mathf.Min(currentWeapon.MaxSpreadAngle, currentWeapon.SpreadAngle + additionalSpreadAngle);
+        }
+
+        private void AddShotSpread()
+        {
+            if (currentWeapon == null || currentWeapon.SpreadIncreasePerShot <= 0f)
+            {
+                return;
+            }
+
+            float maxAdditionalSpread = Mathf.Max(0f, currentWeapon.MaxSpreadAngle - currentWeapon.SpreadAngle);
+            additionalSpreadAngle = Mathf.Min(maxAdditionalSpread, additionalSpreadAngle + currentWeapon.SpreadIncreasePerShot);
+        }
+
+        private void UpdateSpreadRecovery()
+        {
+            if (additionalSpreadAngle <= 0f || currentWeapon == null)
+            {
+                return;
+            }
+
+            if (ShouldHoldCurrentSpray())
+            {
+                return;
+            }
+
+            additionalSpreadAngle = Mathf.MoveTowards(
+                additionalSpreadAngle,
+                0f,
+                currentWeapon.SpreadRecoverySpeed * Time.deltaTime);
+        }
+
+        private bool ShouldHoldCurrentSpray()
+        {
+            return inputEnabled
+                && currentWeapon != null
+                && CurrentWeaponUsesAutomaticFire()
+                && !reloading
+                && Cursor.lockState == CursorLockMode.Locked
+                && Input.GetButton("Fire1");
         }
 
         private void PlaySound(AudioClip clip, float volume)
