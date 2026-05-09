@@ -5,6 +5,7 @@ Singleplayer first-person arena deathmatch prototype built in Unity.
 ## Project Info
 
 - Unity version: 2022.3.62f3
+- Menu scene: `Assets/_Project/Scenes/Main_Menu.unity`
 - Main scene: `Assets/_Project/Scenes/Arena_Main.unity`
 - Project source folder: `Assets/_Project`
 - Development checklist: `DEVELOPMENT_TODO.md`
@@ -24,6 +25,7 @@ Singleplayer first-person arena deathmatch prototype built in Unity.
 - Player death stops the run, shows final wave/kills/score, unlocks the cursor, and supports restarting the scene.
 - Pause menu freezes gameplay, unlocks the cursor, and supports resume/restart.
 - Health and ammo pickups restore player resources, hide when collected, and respawn after a short delay.
+- Main menu scene provides Play/Quit entry flow and Build Settings scene order.
 - Imported visual assets are used only for presentation.
 
 ## Controls

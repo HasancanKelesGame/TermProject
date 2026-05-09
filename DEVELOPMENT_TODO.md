@@ -367,7 +367,7 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 
 - [x] Create `GameManager` singleton or scene-level manager.
 - [ ] Define game states:
-  - [ ] MainMenu
+  - [x] MainMenu
   - [x] Playing
   - [ ] WaveComplete
   - [x] Paused
@@ -542,11 +542,11 @@ Goal: Make the game understandable and presentable.
 
 ## Main Menu
 
-- [ ] Create main menu UI.
-- [ ] Add Play button.
-- [ ] Add Quit button if needed.
-- [ ] Add title text.
-- [ ] Add basic background camera view or static scene.
+- [x] Create main menu UI.
+- [x] Add Play button.
+- [x] Add Quit button if needed.
+- [x] Add title text.
+- [x] Add basic background camera view or static scene.
 
 ## HUD Polish
 
@@ -698,8 +698,8 @@ Goal: Prepare final deliverables.
 
 ## Build
 
-- [ ] Add main menu and arena scene to Build Settings.
-- [ ] Confirm scene order is correct.
+- [x] Add main menu and arena scene to Build Settings.
+- [x] Confirm scene order is correct.
 - [ ] Make a local test build.
 - [ ] Run the build outside the editor.
 - [ ] Confirm controls work in build.
