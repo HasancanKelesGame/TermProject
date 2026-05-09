@@ -648,47 +648,47 @@ Goal: Collect required profiler metrics and fix obvious performance problems.
 ## Profiling Setup
 
 - [ ] Open Unity Profiler.
-- [ ] Profile in Play Mode.
-- [ ] Profile during peak combat.
-- [ ] Record target hardware/specs.
-- [ ] Capture FPS/frame time.
+- [x] Profile in Play Mode with the custom `PerformanceLogger`.
+- [x] Profile during peak combat with waves active.
+- [x] Record target hardware/specs.
+- [x] Capture FPS/frame time.
 - [ ] Capture CPU usage.
-- [ ] Capture memory allocation.
+- [x] Capture memory allocation.
 - [ ] Capture GC allocation if visible.
 
 ## Performance Risks To Check
 
-- [ ] Too many bots active.
+- [x] Too many bots active.
 - [ ] Expensive AI updates every frame.
 - [ ] Excessive raycasts.
 - [ ] UI allocations.
 - [ ] Instantiate/destroy spikes during waves.
 - [ ] Particle or audio spam.
-- [ ] NavMeshAgent cost with higher bot counts.
+- [x] NavMeshAgent cost with current bot counts.
 
 ## Optimization Tasks
 
-- [ ] Limit max active bots.
-- [ ] Use attack/detection timers instead of checking everything every frame where possible.
+- [x] Limit max active bots.
+- [x] Use attack/detection timers instead of checking everything every frame where possible.
 - [ ] Pool bots if instantiate/destroy spikes are significant.
 - [ ] Pool impacts/muzzle flashes if needed.
-- [ ] Avoid per-frame string allocations in HUD.
-- [ ] Tune bot count for stable performance.
+- [x] Avoid per-frame string allocations in HUD.
+- [x] Tune bot count for stable performance.
 
 ## Profiler Notes For Report
 
-- [ ] Note average FPS during normal combat.
-- [ ] Note lowest FPS during peak combat.
+- [x] Note average FPS during normal combat.
+- [x] Note lowest FPS during peak combat.
 - [ ] Note main CPU bottleneck.
-- [ ] Note memory allocation observations.
-- [ ] Note at least one optimization made.
+- [x] Note memory allocation observations.
+- [x] Note at least one optimization made.
 - [ ] Add screenshots if required by instructor.
 
 ## Definition Of Done
 
-- [ ] Profiler data is collected.
+- [x] Profiler data is collected.
 - [ ] Major bottlenecks are documented.
-- [ ] At least one optimization decision is explained.
+- [x] At least one optimization decision is explained.
 
 ---
 

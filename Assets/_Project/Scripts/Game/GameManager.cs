@@ -42,6 +42,9 @@ namespace TermProject.Game
         [Header("Scoring")]
         [SerializeField] private int scorePerKill = 100;
 
+        [Header("Profiling")]
+        [SerializeField] private bool enablePerformanceLogging = true;
+
         private int currentWave;
         private int activeBots;
         private int totalKills;
@@ -112,6 +115,11 @@ namespace TermProject.Game
 
             audioSource.playOnAwake = false;
             audioSource.spatialBlend = 0f;
+
+            if (enablePerformanceLogging && GetComponent<PerformanceLogger>() == null)
+            {
+                gameObject.AddComponent<PerformanceLogger>();
+            }
 
             gameOverMenu?.SetGameManager(this);
             pauseMenu?.SetGameManager(this);
