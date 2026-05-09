@@ -42,6 +42,11 @@ namespace TermProject.Game
         [Header("Scoring")]
         [SerializeField] private int scorePerKill = 100;
 
+        [Header("Crazy Mode")]
+        [SerializeField] private bool enableCrazyMode;
+        [SerializeField] private int crazyModeScorePerKill = 150;
+        [SerializeField] private GameObject[] objectsHiddenInCrazyMode;
+
         [Header("Profiling")]
         [SerializeField] private bool enablePerformanceLogging = true;
 
@@ -57,6 +62,7 @@ namespace TermProject.Game
         public int TotalKills => totalKills;
         public int Score => score;
         public GameState CurrentState => currentState;
+        public bool CrazyModeEnabled => enableCrazyMode;
 
         private void Awake()
         {
@@ -116,6 +122,9 @@ namespace TermProject.Game
             audioSource.playOnAwake = false;
             audioSource.spatialBlend = 0f;
 
+            ApplySelectedGameMode();
+            ApplyCrazyModeSceneChanges();
+
             if (enablePerformanceLogging && GetComponent<PerformanceLogger>() == null)
             {
                 gameObject.AddComponent<PerformanceLogger>();
@@ -165,7 +174,7 @@ namespace TermProject.Game
             }
 
             totalKills++;
-            score += Mathf.Max(0, scorePerKill);
+            score += GetScorePerKill();
             RefreshHud();
         }
 
@@ -312,6 +321,36 @@ namespace TermProject.Game
             hudController.SetWave(currentWave);
             hudController.SetKills(totalKills);
             hudController.SetScore(score);
+        }
+
+        private int GetScorePerKill()
+        {
+            int scoreValue = enableCrazyMode ? crazyModeScorePerKill : scorePerKill;
+            return Mathf.Max(0, scoreValue);
+        }
+
+        private void ApplySelectedGameMode()
+        {
+            if (GameModeSettings.HasSelection)
+            {
+                enableCrazyMode = GameModeSettings.CrazyModeEnabled;
+            }
+        }
+
+        private void ApplyCrazyModeSceneChanges()
+        {
+            if (!enableCrazyMode || objectsHiddenInCrazyMode == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < objectsHiddenInCrazyMode.Length; i++)
+            {
+                if (objectsHiddenInCrazyMode[i] != null)
+                {
+                    objectsHiddenInCrazyMode[i].SetActive(false);
+                }
+            }
         }
 
         private void PlaySound(AudioClip clip, float volume)

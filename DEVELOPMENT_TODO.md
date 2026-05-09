@@ -277,7 +277,7 @@ Goal: Create one bot that navigates, detects the player, attacks, and dies.
 - [x] Mark obstacles.
 - [x] Bake NavMesh.
 - [x] Confirm bot can reach player area.
-- [ ] Add spawn point validation for NavMesh.
+- [x] Add spawn point validation for NavMesh.
 
 ## Bot FSM
 
@@ -306,10 +306,11 @@ Create `BotAI` using a simple finite state machine.
 
 ## Patrol State
 
-- [ ] Add patrol points.
-- [ ] Choose random patrol destination.
-- [ ] Move between patrol points using NavMeshAgent.
-- [ ] Wait briefly at patrol point.
+- [x] Add patrol points.
+- [x] Choose random patrol destination.
+- [x] Move between patrol points using NavMeshAgent.
+- [x] Wait briefly at patrol point.
+- [x] Add patrol recovery/debug logging for invalid patrol targets.
 - [x] Transition to chase/detect when player is seen.
 
 ## Chase State
@@ -393,6 +394,8 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 - [x] Prevent spawning directly in front of player if possible.
 - [x] Validate spawn position is on NavMesh.
 - [x] Start next wave after short delay.
+- [x] Tune normal wave count to keep increasing past wave 4.
+- [x] Add Crazy Mode spawn/count overrides for dense enemy waves.
 
 ## Difficulty Curve
 
@@ -401,7 +404,7 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 - [x] Define bot health scaling.
 - [x] Define bot damage scaling.
 - [x] Define bot speed scaling.
-- [ ] Keep difficulty fair for testing.
+- [x] Keep difficulty fair for testing.
 - [ ] Document final tuning values in report notes.
 
 ## Score System
@@ -418,7 +421,7 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 - [x] Show final kills.
 - [x] Show final score.
 - [x] Add restart button.
-- [ ] Add quit to menu button.
+- [x] Add quit to menu button.
 - [x] Reset player health/ammo on restart.
 - [x] Clear active bots on restart.
 
@@ -429,7 +432,7 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 - [x] Show pause UI.
 - [x] Resume button.
 - [x] Restart button.
-- [ ] Quit button if needed.
+- [x] Quit button if needed.
 
 ## Wave System Test
 
@@ -465,7 +468,7 @@ Goal: Add health and ammo pickups to support longer waves.
 
 ## Health Pickup
 
-- [ ] Create health pickup prefab.
+- [x] Create health pickup prefab.
 - [x] Restore fixed amount of health.
 - [x] Do not exceed max health.
 - [x] Destroy or hide after pickup.
@@ -473,7 +476,7 @@ Goal: Add health and ammo pickups to support longer waves.
 
 ## Ammo Pickup
 
-- [ ] Create ammo pickup prefab.
+- [x] Create ammo pickup prefab.
 - [x] Restore ammo for current weapon or all weapons.
 - [x] Do not exceed max reserve ammo.
 - [x] Destroy or hide after pickup.
@@ -544,6 +547,7 @@ Goal: Make the game understandable and presentable.
 
 - [x] Create main menu UI.
 - [x] Add Play button.
+- [x] Add optional Crazy Mode toggle.
 - [x] Add Quit button if needed.
 - [x] Add title text.
 - [x] Add basic background camera view or static scene.
@@ -552,7 +556,7 @@ Goal: Make the game understandable and presentable.
 
 - [ ] Health display is clear.
 - [ ] Ammo display is clear.
-- [ ] Wave display is clear.
+- [x] Wave display is clear.
 - [ ] Kill count is clear.
 - [ ] Score display is clear.
 - [ ] Crosshair is centered.
@@ -593,7 +597,7 @@ Goal: Make the game understandable and presentable.
 
 - [ ] The game can be understood without explanation.
 - [ ] UI and feedback make combat readable.
-- [ ] Menus and restart flow work.
+- [x] Menus and restart flow work.
 
 ---
 
@@ -619,7 +623,7 @@ Goal: Make the arena support combat and look acceptable for submission.
 - [x] Import or assign wall material.
 - [ ] Add cover material.
 - [ ] Add bot material.
-- [ ] Add pickup material.
+- [x] Add pickup material.
 - [ ] Add weapon placeholder material.
 - [x] Import free assets only if needed.
 - [x] Confirm imported assets are visual/audio only, not gameplay logic.

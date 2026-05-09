@@ -56,6 +56,7 @@ namespace TermProject.Weapons
         }
 
         [Header("References")]
+        [SerializeField] private GameManager gameManager;
         [SerializeField] private WeaponData startingWeapon;
         [SerializeField] private Camera aimCamera;
         [SerializeField] private HudController hudController;
@@ -83,6 +84,11 @@ namespace TermProject.Weapons
         [Header("Input")]
         [SerializeField] private KeyCode reloadKey = KeyCode.R;
         [SerializeField] private bool automaticFire = true;
+
+        [Header("Crazy Mode")]
+        [SerializeField] private bool useCrazyModeOverrides = true;
+        [SerializeField] private bool crazyModeUnlimitedAmmo = true;
+        [SerializeField, Min(1f)] private float crazyModeAutomaticFireRateMultiplier = 1.75f;
 
         [Header("Effects")]
         [SerializeField] private ParticleSystem muzzleFlash;
@@ -122,6 +128,11 @@ namespace TermProject.Weapons
 
         private void Awake()
         {
+            if (gameManager == null)
+            {
+                gameManager = GameManager.Instance ?? FindFirstObjectByType<GameManager>();
+            }
+
             if (aimCamera == null)
             {
                 aimCamera = GetComponentInChildren<Camera>();
@@ -341,13 +352,29 @@ namespace TermProject.Weapons
 
             if (magazineAmmo <= 0)
             {
-                TryStartReload();
-                return;
+                if (HasUnlimitedAmmo())
+                {
+                    magazineAmmo = currentWeapon.MagazineSize;
+                }
+                else
+                {
+                    TryStartReload();
+                    return;
+                }
             }
 
-            nextFireTime = Time.time + currentWeapon.SecondsPerShot;
-            magazineAmmo--;
-            SaveCurrentSlotAmmo();
+            nextFireTime = Time.time + GetCurrentSecondsPerShot();
+
+            if (HasUnlimitedAmmo())
+            {
+                magazineAmmo = currentWeapon.MagazineSize;
+            }
+            else
+            {
+                magazineAmmo--;
+                SaveCurrentSlotAmmo();
+            }
+
             RefreshHud();
             PlayMuzzleEffects();
             PlayFireSound();
@@ -444,6 +471,11 @@ namespace TermProject.Weapons
 
         private void TryStartReload()
         {
+            if (HasUnlimitedAmmo())
+            {
+                return;
+            }
+
             if (reloading || reserveAmmo <= 0 || magazineAmmo >= currentWeapon.MagazineSize)
             {
                 return;
@@ -656,6 +688,12 @@ namespace TermProject.Weapons
                 return;
             }
 
+            if (HasUnlimitedAmmo())
+            {
+                hudController.SetUnlimitedAmmo(currentWeapon.MagazineSize);
+                return;
+            }
+
             hudController.SetAmmo(magazineAmmo, reserveAmmo);
         }
 
@@ -770,9 +808,36 @@ namespace TermProject.Weapons
                 && currentWeapon != null
                 && CurrentWeaponUsesAutomaticFire()
                 && !reloading
-                && magazineAmmo > 0
+                && (magazineAmmo > 0 || HasUnlimitedAmmo())
                 && Cursor.lockState == CursorLockMode.Locked
                 && Input.GetButton("Fire1");
+        }
+
+        private float GetCurrentSecondsPerShot()
+        {
+            if (currentWeapon == null)
+            {
+                return 0.1f;
+            }
+
+            float secondsPerShot = currentWeapon.SecondsPerShot;
+
+            if (IsCrazyModeActive() && CurrentWeaponUsesAutomaticFire())
+            {
+                secondsPerShot /= Mathf.Max(1f, crazyModeAutomaticFireRateMultiplier);
+            }
+
+            return secondsPerShot;
+        }
+
+        private bool HasUnlimitedAmmo()
+        {
+            return IsCrazyModeActive() && crazyModeUnlimitedAmmo;
+        }
+
+        private bool IsCrazyModeActive()
+        {
+            return useCrazyModeOverrides && gameManager != null && gameManager.CrazyModeEnabled;
         }
 
         private void StopAutomaticFireSoundNow()

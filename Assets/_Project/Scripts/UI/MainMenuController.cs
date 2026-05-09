@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TermProject.Game;
 
 namespace TermProject.UI
 {
@@ -12,7 +13,9 @@ namespace TermProject.UI
         [Header("References")]
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private Button playButton;
+        [SerializeField] private Button crazyModeButton;
         [SerializeField] private Button quitButton;
+        [SerializeField] private Toggle crazyModeToggle;
         [SerializeField] private AudioSource audioSource;
         [SerializeField] private AudioClip buttonClickSound;
         [SerializeField, Range(0f, 1f)] private float buttonClickVolume = 0.7f;
@@ -43,6 +46,11 @@ namespace TermProject.UI
             {
                 titleText.text = "FPS ARENA";
             }
+
+            if (crazyModeToggle != null)
+            {
+                crazyModeToggle.isOn = GameModeSettings.HasSelection && GameModeSettings.CrazyModeEnabled;
+            }
         }
 
         private void OnEnable()
@@ -50,6 +58,11 @@ namespace TermProject.UI
             if (playButton != null)
             {
                 playButton.onClick.AddListener(Play);
+            }
+
+            if (crazyModeButton != null)
+            {
+                crazyModeButton.onClick.AddListener(PlayCrazyMode);
             }
 
             if (quitButton != null)
@@ -65,6 +78,11 @@ namespace TermProject.UI
                 playButton.onClick.RemoveListener(Play);
             }
 
+            if (crazyModeButton != null)
+            {
+                crazyModeButton.onClick.RemoveListener(PlayCrazyMode);
+            }
+
             if (quitButton != null)
             {
                 quitButton.onClick.RemoveListener(Quit);
@@ -73,6 +91,24 @@ namespace TermProject.UI
 
         public void Play()
         {
+            bool crazyMode = crazyModeToggle != null && crazyModeToggle.isOn;
+            StartGame(crazyMode);
+        }
+
+        public void PlayNormal()
+        {
+            StartGame(false);
+        }
+
+        public void PlayCrazyMode()
+        {
+            StartGame(true);
+        }
+
+        private void StartGame(bool crazyMode)
+        {
+            GameModeSettings.SetCrazyMode(crazyMode);
+
             if (buttonClickSound != null && audioSource != null)
             {
                 StartCoroutine(PlayAfterButtonSound());

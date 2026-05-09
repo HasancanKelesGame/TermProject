@@ -22,6 +22,7 @@ namespace TermProject.UI
 
         private int currentAmmo = -1;
         private int reserveAmmo = -1;
+        private bool ammoIsUnlimited;
         private int currentWave;
         private int kills;
         private int score;
@@ -61,6 +62,15 @@ namespace TermProject.UI
         {
             currentAmmo = current;
             reserveAmmo = reserve;
+            ammoIsUnlimited = false;
+            RefreshAmmo();
+        }
+
+        public void SetUnlimitedAmmo(int magazineSize)
+        {
+            currentAmmo = Mathf.Max(1, magazineSize);
+            reserveAmmo = -1;
+            ammoIsUnlimited = true;
             RefreshAmmo();
         }
 
@@ -125,6 +135,12 @@ namespace TermProject.UI
 
         private void RefreshAmmo()
         {
+            if (ammoIsUnlimited)
+            {
+                SetText(ammoText, "AMMO INF");
+                return;
+            }
+
             string value = currentAmmo < 0 || reserveAmmo < 0
                 ? "AMMO --/--"
                 : $"AMMO {currentAmmo}/{reserveAmmo}";

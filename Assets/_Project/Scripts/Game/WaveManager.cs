@@ -28,7 +28,7 @@ namespace TermProject.Game
         [SerializeField] private int startingWave = 1;
         [SerializeField] private int baseBotCount = 2;
         [SerializeField] private int botsAddedPerWave = 1;
-        [SerializeField] private int maxBotCount = 8;
+        [SerializeField] private int maxBotCount = 12;
 
         [Header("Bot Scaling")]
         [SerializeField] private float baseBotHealth = 100f;
@@ -47,6 +47,18 @@ namespace TermProject.Game
         [SerializeField] private bool avoidSpawningInPlayerView = true;
         [SerializeField] private float playerViewAvoidanceDistance = 14f;
         [SerializeField] private float playerViewAvoidanceAngle = 90f;
+
+        [Header("Crazy Mode")]
+        [SerializeField] private bool useCrazyModeOverrides = true;
+        [SerializeField] private Transform crazySpawnCenter;
+        [SerializeField] private Vector2 crazySpawnAreaSize = new Vector2(34f, 34f);
+        [SerializeField] private int crazyBaseBotCount = 10;
+        [SerializeField] private int crazyBotsAddedPerWave = 5;
+        [SerializeField] private int crazyMaxBotCount = 45;
+        [SerializeField, Min(0f)] private float crazySpawnInterval = 0.1f;
+        [SerializeField] private float crazyMinSpawnDistanceFromPlayer = 4f;
+        [SerializeField] private float crazyNavMeshSampleRadius = 4f;
+        [SerializeField] private int crazySpawnAttempts = 48;
 
         [Header("Debug")]
         [SerializeField] private int currentWave;
@@ -90,6 +102,24 @@ namespace TermProject.Game
             {
                 StartWaves();
             }
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (!useCrazyModeOverrides)
+            {
+                return;
+            }
+
+            Vector3 center = crazySpawnCenter != null ? crazySpawnCenter.position : transform.position;
+            Vector3 halfX = Vector3.right * Mathf.Max(1f, crazySpawnAreaSize.x) * 0.5f;
+            Vector3 halfZ = Vector3.forward * Mathf.Max(1f, crazySpawnAreaSize.y) * 0.5f;
+
+            Gizmos.color = new Color(1f, 0.35f, 0.05f, 0.85f);
+            Gizmos.DrawLine(center - halfX - halfZ, center + halfX - halfZ);
+            Gizmos.DrawLine(center + halfX - halfZ, center + halfX + halfZ);
+            Gizmos.DrawLine(center + halfX + halfZ, center - halfX + halfZ);
+            Gizmos.DrawLine(center - halfX + halfZ, center - halfX - halfZ);
         }
 
         public void StartWaves()
@@ -177,15 +207,16 @@ namespace TermProject.Game
             gameManager?.SetWave(wave);
 
             int botCount = GetBotCountForWave(wave);
+            float currentSpawnInterval = GetSpawnInterval();
 
             for (int i = 0; i < botCount; i++)
             {
                 SpawnBot(wave);
                 RefreshActiveBotCount();
 
-                if (spawnInterval > 0f && i < botCount - 1)
+                if (currentSpawnInterval > 0f && i < botCount - 1)
                 {
-                    yield return new WaitForSeconds(spawnInterval);
+                    yield return new WaitForSeconds(currentSpawnInterval);
                 }
             }
 
@@ -251,6 +282,11 @@ namespace TermProject.Game
         private bool TryGetSpawnPosition(out Vector3 spawnPosition)
         {
             spawnPosition = Vector3.zero;
+
+            if (IsCrazyModeActive() && TryGetCrazySpawnPosition(out spawnPosition))
+            {
+                return true;
+            }
 
             if (spawnPoints == null || spawnPoints.Length == 0)
             {
@@ -327,11 +363,68 @@ namespace TermProject.Game
             return angle > playerViewAvoidanceAngle * 0.5f;
         }
 
+        private bool TryGetCrazySpawnPosition(out Vector3 spawnPosition)
+        {
+            spawnPosition = Vector3.zero;
+
+            Vector3 center = crazySpawnCenter != null ? crazySpawnCenter.position : transform.position;
+            Vector2 areaSize = new Vector2(
+                Mathf.Max(1f, crazySpawnAreaSize.x),
+                Mathf.Max(1f, crazySpawnAreaSize.y));
+            int attempts = Mathf.Max(1, crazySpawnAttempts);
+
+            for (int i = 0; i < attempts; i++)
+            {
+                Vector3 candidate = center + new Vector3(
+                    Random.Range(-areaSize.x * 0.5f, areaSize.x * 0.5f),
+                    0f,
+                    Random.Range(-areaSize.y * 0.5f, areaSize.y * 0.5f));
+
+                if (!IsCrazySpawnFarEnoughFromPlayer(candidate))
+                {
+                    continue;
+                }
+
+                if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, crazyNavMeshSampleRadius, NavMesh.AllAreas)
+                    && IsCrazySpawnFarEnoughFromPlayer(hit.position))
+                {
+                    spawnPosition = hit.position;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsCrazySpawnFarEnoughFromPlayer(Vector3 candidatePosition)
+        {
+            if (player == null)
+            {
+                return true;
+            }
+
+            Vector3 toSpawn = candidatePosition - player.position;
+            toSpawn.y = 0f;
+            return toSpawn.magnitude >= Mathf.Max(0f, crazyMinSpawnDistanceFromPlayer);
+        }
+
         private int GetBotCountForWave(int wave)
         {
             int waveIndex = Mathf.Max(0, wave - 1);
+
+            if (IsCrazyModeActive())
+            {
+                int crazyCount = crazyBaseBotCount + waveIndex * crazyBotsAddedPerWave;
+                return Mathf.Clamp(crazyCount, 1, Mathf.Max(1, crazyMaxBotCount));
+            }
+
             int count = baseBotCount + waveIndex * botsAddedPerWave;
             return Mathf.Clamp(count, 1, Mathf.Max(1, maxBotCount));
+        }
+
+        private float GetSpawnInterval()
+        {
+            return IsCrazyModeActive() ? Mathf.Max(0f, crazySpawnInterval) : Mathf.Max(0f, spawnInterval);
         }
 
         private float GetBotHealthForWave(int wave)
@@ -367,13 +460,18 @@ namespace TermProject.Game
                 return false;
             }
 
-            if (spawnPoints == null || spawnPoints.Length == 0)
+            if (!IsCrazyModeActive() && (spawnPoints == null || spawnPoints.Length == 0))
             {
                 Debug.LogWarning("WaveManager needs at least one spawn point before waves can start.");
                 return false;
             }
 
             return true;
+        }
+
+        private bool IsCrazyModeActive()
+        {
+            return useCrazyModeOverrides && gameManager != null && gameManager.CrazyModeEnabled;
         }
 
         private void RefreshActiveBotCount()
