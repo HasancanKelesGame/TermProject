@@ -68,9 +68,9 @@ Goal: Prepare the Unity project so development is organized and safe to commit.
 
 - [x] Confirm visible meta files are enabled.
 - [x] Confirm force text serialization is enabled.
-- [ ] Set project name/player product name.
-- [ ] Set target platform for final build.
-- [ ] Decide target resolution/fullscreen behavior.
+- [x] Set project name/player product name.
+- [x] Set target platform for final build.
+- [x] Decide target resolution/fullscreen behavior.
 - [ ] Disable unused packages only if they create problems.
 
 ## Folder Structure
@@ -116,12 +116,12 @@ Goal: Create a basic first-person player in a simple arena.
 - [x] Add simple cover blocks.
 - [x] Add lighting.
 - [x] Add player spawn point.
-- [ ] Add temporary bot spawn points.
-- [ ] Add scene objects to clear hierarchy groups:
+- [x] Add temporary bot spawn points.
+- [x] Add scene objects to clear hierarchy groups:
   - [x] `Environment`
-  - [ ] `SpawnPoints`
-  - [ ] `Gameplay`
-  - [ ] `UI`
+  - [x] `SpawnPoints`
+  - [x] `Gameplay`
+  - [x] `UI`
 
 ## First-Person Controller
 
@@ -149,7 +149,7 @@ Goal: Create a basic first-person player in a simple arena.
 - [x] Add heal method.
 - [x] Add death event.
 - [x] Attach health to player.
-- [ ] Trigger game over when player dies.
+- [x] Trigger game over when player dies.
 
 ## Basic HUD
 
@@ -228,14 +228,14 @@ Goal: Implement one complete weapon and a shared damage system.
 - [x] Add weapon slot list.
 - [x] Add number key switching.
 - [x] Add scroll wheel switching if time permits.
-- [ ] Update HUD weapon name.
+- [ ] Update HUD weapon name if required.
 - [x] Update HUD ammo values.
 
 ## Damage Feedback
 
 - [x] Show hit marker when player hits a bot.
 - [x] Add screen feedback when player takes damage.
-- [ ] Add simple bot damage flash if time permits.
+- [x] Add simple bot/headshot hit feedback.
 
 ## Combat Test
 
@@ -367,10 +367,10 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 ## Game State
 
 - [x] Create `GameManager` singleton or scene-level manager.
-- [ ] Define game states:
+- [x] Define game states:
   - [x] MainMenu
   - [x] Playing
-  - [ ] WaveComplete
+  - [x] WaveComplete / next-wave delay
   - [x] Paused
   - [x] GameOver
 - [x] Track current wave number.
@@ -405,7 +405,7 @@ Goal: Build the full gameplay loop: start, spawn wave, fight, complete wave, sca
 - [x] Define bot damage scaling.
 - [x] Define bot speed scaling.
 - [x] Keep difficulty fair for testing.
-- [ ] Document final tuning values in report notes.
+- [x] Document final tuning values in report notes.
 
 ## Score System
 
@@ -522,10 +522,10 @@ Goal: Add weapon variety only after the first weapon and game loop work.
 
 ## Weapon Balance
 
-- [ ] Tune rifle damage.
-- [ ] Tune rifle fire rate.
-- [ ] Tune rifle magazine size.
-- [ ] Tune reload time.
+- [x] Tune rifle damage.
+- [x] Tune rifle fire rate.
+- [x] Tune rifle magazine size.
+- [x] Tune reload time.
 - [x] Tune second weapon damage.
 - [x] Tune second weapon fire rate.
 - [x] Tune second weapon ammo.
@@ -554,12 +554,12 @@ Goal: Make the game understandable and presentable.
 
 ## HUD Polish
 
-- [ ] Health display is clear.
-- [ ] Ammo display is clear.
+- [x] Health display is clear.
+- [x] Ammo display is clear.
 - [x] Wave display is clear.
-- [ ] Kill count is clear.
-- [ ] Score display is clear.
-- [ ] Crosshair is centered.
+- [x] Kill count is clear.
+- [x] Score display is clear.
+- [x] Crosshair is centered.
 - [x] Hit marker is visible.
 - [x] Damage feedback is visible but not distracting.
 
@@ -589,14 +589,14 @@ Goal: Make the game understandable and presentable.
 
 - [x] Add muzzle flash.
 - [x] Add hit impact effect.
-- [ ] Add bot death effect or animation placeholder.
+- [x] Add bot death effect or animation placeholder.
 - [ ] Add pickup visual effect if time permits.
-- [ ] Add simple material colors for readability.
+- [x] Add simple material colors for readability.
 
 ## Definition Of Done
 
-- [ ] The game can be understood without explanation.
-- [ ] UI and feedback make combat readable.
+- [x] The game can be understood without explanation.
+- [x] UI and feedback make combat readable.
 - [x] Menus and restart flow work.
 
 ---
@@ -607,41 +607,41 @@ Goal: Make the arena support combat and look acceptable for submission.
 
 ## Arena Layout
 
-- [ ] Define arena size.
-- [ ] Add perimeter walls.
-- [ ] Add cover objects.
-- [ ] Add vertical landmarks if useful.
-- [ ] Add pickup locations.
-- [ ] Add bot spawn locations.
-- [ ] Add enough navigation space for bots.
-- [ ] Avoid places where bots get stuck.
-- [ ] Avoid places where player can permanently exploit AI.
+- [x] Define arena size.
+- [x] Add perimeter walls.
+- [x] Add cover objects.
+- [x] Add vertical landmarks if useful.
+- [x] Add pickup locations.
+- [x] Add bot spawn locations.
+- [x] Add enough navigation space for bots.
+- [x] Avoid places where bots get stuck.
+- [x] Avoid places where player can permanently exploit AI.
 
 ## Materials And Art
 
 - [x] Import or assign basic floor material.
 - [x] Import or assign wall material.
-- [ ] Add cover material.
-- [ ] Add bot material.
+- [x] Add cover material.
+- [x] Add bot material.
 - [x] Add pickup material.
-- [ ] Add weapon placeholder material.
+- [x] Add weapon material/model.
 - [x] Import free assets only if needed.
 - [x] Confirm imported assets are visual/audio only, not gameplay logic.
-- [ ] Track source/credit for every external asset.
+- [x] Track source/credit for every external asset in README/report notes.
 
 ## Lighting
 
-- [ ] Add directional light or area lights.
-- [ ] Make bots visible at combat distance.
-- [ ] Make pickups visible.
-- [ ] Avoid overly dark corners.
-- [ ] Check final game view.
+- [x] Add directional light or area lights.
+- [x] Make bots visible at combat distance.
+- [x] Make pickups visible.
+- [x] Avoid overly dark corners.
+- [x] Check final game view.
 
 ## Definition Of Done
 
-- [ ] Arena supports combat and movement.
-- [ ] Bots can navigate properly.
-- [ ] Visuals are simple but readable.
+- [x] Arena supports combat and movement.
+- [x] Bots can navigate properly.
+- [x] Visuals are simple but readable.
 
 ---
 
@@ -663,11 +663,11 @@ Goal: Collect required profiler metrics and fix obvious performance problems.
 ## Performance Risks To Check
 
 - [x] Too many bots active.
-- [ ] Expensive AI updates every frame.
-- [ ] Excessive raycasts.
-- [ ] UI allocations.
-- [ ] Instantiate/destroy spikes during waves.
-- [ ] Particle or audio spam.
+- [x] Expensive AI updates every frame.
+- [x] Excessive raycasts.
+- [x] UI allocations.
+- [x] Instantiate/destroy spikes during waves.
+- [x] Particle or audio spam.
 - [x] NavMeshAgent cost with current bot counts.
 
 ## Optimization Tasks
@@ -715,25 +715,25 @@ Goal: Prepare final deliverables.
 
 - [ ] Remove unused test scripts.
 - [ ] Remove unused prefabs if they confuse project structure.
-- [ ] Remove console debug spam.
+- [x] Remove console debug spam.
 - [ ] Keep useful debug fields in Inspector if helpful.
-- [ ] Confirm script names match class names.
-- [ ] Confirm no compile errors.
-- [ ] Confirm no missing script components.
+- [x] Confirm script names match class names.
+- [x] Confirm no compile errors.
+- [x] Confirm no missing script components.
 
 ## Report
 
-- [ ] Explain project concept.
-- [ ] Explain FPS controller implementation.
-- [ ] Explain weapon system architecture.
-- [ ] Explain bot FSM states.
-- [ ] Explain NavMesh usage.
-- [ ] Explain wave spawning and difficulty curve.
-- [ ] Explain pickups and scoring.
-- [ ] Explain technical challenges.
-- [ ] Include profiler metrics.
-- [ ] Include optimization notes.
-- [ ] Include asset/audio credits.
+- [x] Draft project concept notes.
+- [x] Draft FPS controller implementation notes.
+- [x] Draft weapon system architecture notes.
+- [x] Draft bot FSM state notes.
+- [x] Draft NavMesh usage notes.
+- [x] Draft wave spawning and difficulty curve notes.
+- [x] Draft pickups and scoring notes.
+- [x] Draft technical challenges notes.
+- [x] Include profiler metrics in report notes.
+- [x] Include optimization notes in report notes.
+- [x] Include asset/audio credits in report notes.
 - [ ] Include screenshots if required.
 
 ## Gameplay Video
@@ -813,4 +813,21 @@ Use this section to record what we completed each work session.
 - [x] Added visual cover props with colliders.
 - [x] Reworked jump detection around `CollisionFlags.Below` to reduce grounded flicker without allowing flight.
 - [x] Temporary jump debug overlay/logging removed before first commit.
-- [ ] Next session target: add basic HUD and crosshair.
+- [x] Next session target completed later: add basic HUD and crosshair.
+
+## 2026-05-10
+
+- [x] Added main menu, pause menu, game over flow, restart, and return-to-menu support.
+- [x] Added normal wave loop with scaling bot count, health, damage, speed, and attack cooldown.
+- [x] Added optional Crazy Mode with menu toggle, unlimited ammo, faster rifle fire, random NavMesh spawning, and tuned spawn caps.
+- [x] Added rifle and pistol weapon visuals, recoil, spray, crosshair kick, reload motion, muzzle flash, hit impact, and weapon audio.
+- [x] Added movement, landing, pickup, bot attack, bot death, player death, and headshot SFX.
+- [x] Added crouch with visible camera lowering and reduced `CharacterController` hitbox height.
+- [x] Replaced placeholder bot visual with imported SciFi Space Soldier visual while keeping AI/gameplay code original.
+- [x] Added bot Animator visual controller, muzzle light flash, and longer death cleanup delay.
+- [x] Added body/head hitboxes with 3x headshot damage and separate headshot feedback sound.
+- [x] Updated bot attack line-of-sight so cover blocks damage.
+- [x] Added and tuned patrol points, spawn points, pickups, NavMesh, and arena readability.
+- [x] Collected custom performance logger data and drafted profiler notes.
+- [x] Updated README, development TODO, and report notes for the current feature-complete game.
+- [ ] Next session target: commit stable source, make a local build, record gameplay video, and assemble final report/submission files.

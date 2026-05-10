@@ -18,6 +18,15 @@ namespace TermProject.Player
         [SerializeField] private float groundProbeDistance = 0.22f;
         [SerializeField] private LayerMask groundLayers = ~0;
 
+        [Header("Crouch")]
+        [SerializeField] private KeyCode crouchKey = KeyCode.LeftControl;
+        [SerializeField] private bool allowRightControlCrouch = true;
+        [SerializeField] private float crouchHeight = 0.95f;
+        [SerializeField] private float crouchSpeedMultiplier = 0.55f;
+        [SerializeField] private float crouchCameraYOffset = -0.85f;
+        [SerializeField] private float crouchTransitionSpeed = 18f;
+        [SerializeField] private LayerMask crouchBlockLayers = ~0;
+
         [Header("Mouse Look")]
         [SerializeField] private float mouseSensitivity = 2.2f;
         [SerializeField] private float minPitch = -80f;
@@ -37,6 +46,12 @@ namespace TermProject.Player
         [SerializeField, Min(0.1f)] private float runLoopPitch = 1.12f;
         [SerializeField, Min(0f)] private float minAirTimeForLandingSound = 0.15f;
 
+        [Header("Runtime Debug")]
+        [SerializeField] private bool debugIsCrouching;
+        [SerializeField] private float debugControllerHeight;
+        [SerializeField] private Vector3 debugControllerCenter;
+        [SerializeField] private Vector3 debugCameraLocalPosition;
+
         private CharacterController characterController;
         private float verticalVelocity;
         private float cameraPitch;
@@ -46,15 +61,33 @@ namespace TermProject.Player
         private float lastGroundedTime = -999f;
         private float lastJumpPressedTime = -999f;
         private float lastLeftGroundTime = -999f;
+        private float standingHeight;
+        private Vector3 standingCenter;
+        private Vector3 standingCameraLocalPosition;
+        private Vector3 targetCameraLocalPosition;
+        private bool crouching;
         private bool hasGroundedState;
+
+        public bool IsCrouching => crouching;
+        public Vector3 BotTargetPoint => playerCamera != null
+            ? playerCamera.transform.position
+            : transform.position + Vector3.up * (characterController != null ? characterController.center.y : 1.1f);
 
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
+            standingHeight = characterController.height;
+            standingCenter = characterController.center;
 
             if (playerCamera == null)
             {
                 playerCamera = GetComponentInChildren<Camera>();
+            }
+
+            if (playerCamera != null)
+            {
+                standingCameraLocalPosition = playerCamera.transform.localPosition;
+                targetCameraLocalPosition = standingCameraLocalPosition;
             }
 
             if (movementAudioSource == null)
@@ -94,6 +127,12 @@ namespace TermProject.Player
 
             Look();
             Move();
+            UpdateCrouchDebugValues();
+        }
+
+        private void LateUpdate()
+        {
+            ApplyCrouchCameraPosition();
         }
 
         public void SetControlsEnabled(bool enabled, bool resetVerticalVelocity = true)
@@ -159,8 +198,16 @@ namespace TermProject.Player
                 input.Normalize();
             }
 
-            bool sprinting = Input.GetKey(KeyCode.LeftShift) && hasMoveInput;
+            UpdateCrouch();
+
+            bool sprinting = !crouching && Input.GetKey(KeyCode.LeftShift) && hasMoveInput;
             float targetSpeed = sprinting ? sprintSpeed : walkSpeed;
+
+            if (crouching)
+            {
+                targetSpeed *= crouchSpeedMultiplier;
+            }
+
             Vector3 move = transform.right * input.x + transform.forward * input.z;
 
             bool canUseGroundedJump = Time.time - lastGroundedTime <= groundedGraceTime && !jumpedSinceGrounded;
@@ -213,6 +260,94 @@ namespace TermProject.Player
             }
 
             UpdateMovementLoop(hasMoveInput, sprinting);
+        }
+
+        private void UpdateCrouch()
+        {
+            bool wantsCrouch = Input.GetKey(crouchKey)
+                || allowRightControlCrouch && Input.GetKey(KeyCode.RightControl);
+
+            if (wantsCrouch)
+            {
+                crouching = true;
+            }
+            else if (crouching && CanStand())
+            {
+                crouching = false;
+            }
+
+            float targetHeight = crouching ? Mathf.Clamp(crouchHeight, characterController.radius * 2f, standingHeight) : standingHeight;
+            float standingBottom = standingCenter.y - standingHeight * 0.5f;
+            Vector3 targetCenter = standingCenter;
+            targetCenter.y = standingBottom + targetHeight * 0.5f;
+
+            float blend = 1f - Mathf.Exp(-crouchTransitionSpeed * Time.deltaTime);
+            characterController.height = Mathf.Lerp(characterController.height, targetHeight, blend);
+            characterController.center = Vector3.Lerp(characterController.center, targetCenter, blend);
+
+            targetCameraLocalPosition = standingCameraLocalPosition;
+
+            if (crouching)
+            {
+                targetCameraLocalPosition += Vector3.up * crouchCameraYOffset;
+            }
+        }
+
+        private void ApplyCrouchCameraPosition()
+        {
+            if (playerCamera == null || !controlsEnabled)
+            {
+                return;
+            }
+
+            float blend = 1f - Mathf.Exp(-crouchTransitionSpeed * Time.deltaTime);
+            playerCamera.transform.localPosition = Vector3.Lerp(
+                playerCamera.transform.localPosition,
+                targetCameraLocalPosition,
+                blend);
+        }
+
+        private bool CanStand()
+        {
+            float radius = characterController.radius;
+            float capsuleHeight = Mathf.Max(standingHeight, radius * 2f);
+            Vector3 capsuleCenter = transform.TransformPoint(standingCenter);
+            Vector3 up = transform.up;
+            float halfLine = Mathf.Max(0f, capsuleHeight * 0.5f - radius);
+            Vector3 bottom = capsuleCenter - up * halfLine;
+            Vector3 top = capsuleCenter + up * halfLine;
+            Collider[] hits = Physics.OverlapCapsule(
+                bottom,
+                top,
+                radius,
+                crouchBlockLayers,
+                QueryTriggerInteraction.Ignore);
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i] != characterController && !hits[i].transform.IsChildOf(transform))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void UpdateCrouchDebugValues()
+        {
+            debugIsCrouching = crouching;
+
+            if (characterController != null)
+            {
+                debugControllerHeight = characterController.height;
+                debugControllerCenter = characterController.center;
+            }
+
+            if (playerCamera != null)
+            {
+                debugCameraLocalPosition = playerCamera.transform.localPosition;
+            }
         }
 
         private bool ProbeGround()

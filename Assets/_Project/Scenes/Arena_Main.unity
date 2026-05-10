@@ -284,13 +284,15 @@ MonoBehaviour:
   useCrazyModeOverrides: 1
   crazySpawnCenter: {fileID: 0}
   crazySpawnAreaSize: {x: 34, y: 34}
-  crazyBaseBotCount: 10
-  crazyBotsAddedPerWave: 5
-  crazyMaxBotCount: 45
-  crazySpawnInterval: 0.1
-  crazyMinSpawnDistanceFromPlayer: 4
+  crazyBaseBotCount: 5
+  crazyBotsAddedPerWave: 2
+  crazyMaxBotCount: 22
+  crazySpawnInterval: 0.35
+  crazyMinSpawnDistanceFromPlayer: 7
   crazyNavMeshSampleRadius: 4
   crazySpawnAttempts: 48
+  crazyDamageMultiplier: 0.75
+  crazyAttackCooldownMultiplier: 1.25
   currentWave: 0
   activeBotCount: 0
 --- !u!4 &91497825

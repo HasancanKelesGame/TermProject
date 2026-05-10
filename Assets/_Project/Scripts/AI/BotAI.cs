@@ -27,12 +27,13 @@ namespace TermProject.AI
         [SerializeField] private Transform player;
         [SerializeField] private Damageable playerDamageable;
         [SerializeField] private Transform eyePoint;
+        [SerializeField] private Transform firePoint;
         [SerializeField] private Transform[] patrolPoints;
 
         [Header("Sensing")]
-        [SerializeField] private float detectionRange = 18f;
-        [SerializeField] private float attackRange = 8f;
-        [SerializeField] private float fieldOfViewAngle = 120f;
+        [SerializeField] private float detectionRange = 35f;
+        [SerializeField] private float attackRange = 18f;
+        [SerializeField] private float fieldOfViewAngle = 170f;
         [SerializeField] private float loseSightDelay = 2f;
         [SerializeField] private LayerMask lineOfSightLayers = ~0;
 
@@ -56,7 +57,8 @@ namespace TermProject.AI
 
         [Header("Death")]
         [SerializeField] private bool destroyAfterDeath = true;
-        [SerializeField] private float deathDestroyDelay = 2f;
+        [SerializeField] private float deathDestroyDelay = 5f;
+        [SerializeField] private bool disableCollidersOnDeath = true;
 
         [Header("Audio")]
         [SerializeField] private AudioSource audioSource;
@@ -72,6 +74,7 @@ namespace TermProject.AI
 
         private NavMeshAgent agent;
         private Damageable damageable;
+        private PlayerController playerController;
         private static string debugLogPath;
         private static bool debugLogPathAnnounced;
         private static int nextDebugId;
@@ -86,11 +89,13 @@ namespace TermProject.AI
         private int debugId;
         private float patrolDestinationSetTime;
         private Vector3 currentPatrolDestination;
+        private Collider[] ownedColliders;
         private bool hasPatrolDestination;
         private bool initialized;
         private bool deathRegistered;
 
         public BotState CurrentState => currentState;
+        public event System.Action AttackPerformed;
 
         public void ConfigureForWave(
             Transform targetPlayer,
@@ -103,6 +108,7 @@ namespace TermProject.AI
             if (targetPlayer != null)
             {
                 player = targetPlayer;
+                playerController = player.GetComponent<PlayerController>();
             }
 
             if (targetPlayerDamageable != null)
@@ -135,6 +141,7 @@ namespace TermProject.AI
         {
             agent = GetComponent<NavMeshAgent>();
             damageable = GetComponent<Damageable>();
+            ownedColliders = GetComponentsInChildren<Collider>();
             debugId = ++nextDebugId;
 
             if (audioSource == null)
@@ -160,12 +167,18 @@ namespace TermProject.AI
 
             if (player == null)
             {
-                PlayerController playerController = FindFirstObjectByType<PlayerController>();
+                PlayerController foundPlayerController = FindFirstObjectByType<PlayerController>();
 
-                if (playerController != null)
+                if (foundPlayerController != null)
                 {
-                    player = playerController.transform;
+                    playerController = foundPlayerController;
+                    player = foundPlayerController.transform;
                 }
+            }
+
+            if (playerController == null && player != null)
+            {
+                playerController = player.GetComponent<PlayerController>();
             }
 
             if (playerDamageable == null && player != null)
@@ -356,12 +369,18 @@ namespace TermProject.AI
                 return;
             }
 
+            if (!HasClearShotToPlayer())
+            {
+                return;
+            }
+
             nextAttackTime = Time.time + attackCooldown;
 
             if (playerDamageable != null)
             {
                 playerDamageable.ApplyDamage(attackDamage);
                 PlaySound(attackSound, attackVolume);
+                AttackPerformed?.Invoke();
                 WriteAiDebugLog("AttackApplied", canSeePlayer);
             }
         }
@@ -597,7 +616,7 @@ namespace TermProject.AI
                 return false;
             }
 
-            Vector3 origin = eyePoint.position;
+            Vector3 origin = GetAttackOrigin();
             Vector3 target = GetPlayerAimPoint();
             Vector3 toPlayer = target - origin;
             float distance = toPlayer.magnitude;
@@ -610,6 +629,31 @@ namespace TermProject.AI
             float angle = Vector3.Angle(transform.forward, toPlayer.normalized);
 
             if (angle > fieldOfViewAngle * 0.5f)
+            {
+                return false;
+            }
+
+            if (!Physics.Raycast(origin, toPlayer.normalized, out RaycastHit hit, distance, lineOfSightLayers, QueryTriggerInteraction.Ignore))
+            {
+                return true;
+            }
+
+            return hit.collider.transform == player || hit.collider.transform.IsChildOf(player);
+        }
+
+        private bool HasClearShotToPlayer()
+        {
+            if (player == null || playerDamageable != null && playerDamageable.IsDead)
+            {
+                return false;
+            }
+
+            Vector3 origin = GetAttackOrigin();
+            Vector3 target = GetPlayerAimPoint();
+            Vector3 toPlayer = target - origin;
+            float distance = toPlayer.magnitude;
+
+            if (distance > attackRange || distance <= 0.01f)
             {
                 return false;
             }
@@ -643,7 +687,22 @@ namespace TermProject.AI
 
         private Vector3 GetPlayerAimPoint()
         {
+            if (playerController != null)
+            {
+                return playerController.BotTargetPoint;
+            }
+
             return player.position + Vector3.up * 1.1f;
+        }
+
+        private Vector3 GetAttackOrigin()
+        {
+            if (firePoint != null)
+            {
+                return firePoint.position;
+            }
+
+            return eyePoint != null ? eyePoint.position : transform.position + Vector3.up * 1.4f;
         }
 
         private void FacePlayer()
@@ -677,10 +736,32 @@ namespace TermProject.AI
             }
 
             PlaySound(deathSound, deathVolume);
+            DisableOwnedColliders();
 
             if (destroyAfterDeath)
             {
                 Destroy(gameObject, deathDestroyDelay);
+            }
+        }
+
+        private void DisableOwnedColliders()
+        {
+            if (!disableCollidersOnDeath)
+            {
+                return;
+            }
+
+            if (ownedColliders == null || ownedColliders.Length == 0)
+            {
+                ownedColliders = GetComponentsInChildren<Collider>();
+            }
+
+            for (int i = 0; i < ownedColliders.Length; i++)
+            {
+                if (ownedColliders[i] != null)
+                {
+                    ownedColliders[i].enabled = false;
+                }
             }
         }
 

@@ -82,6 +82,7 @@ namespace TermProject.Weapons
         [SerializeField] private LayerMask hitLayers = ~0;
 
         [Header("Input")]
+        [SerializeField] private KeyCode fireKey = KeyCode.Mouse0;
         [SerializeField] private KeyCode reloadKey = KeyCode.R;
         [SerializeField] private bool automaticFire = true;
 
@@ -330,7 +331,7 @@ namespace TermProject.Weapons
                 return;
             }
 
-            bool firePressed = CurrentWeaponUsesAutomaticFire() ? Input.GetButton("Fire1") : Input.GetButtonDown("Fire1");
+            bool firePressed = CurrentWeaponUsesAutomaticFire() ? IsFireHeld() : IsFirePressedThisFrame();
 
             if (firePressed)
             {
@@ -400,6 +401,15 @@ namespace TermProject.Weapons
             }
 
             SpawnHitImpact(hit);
+
+            DamageHitbox hitbox = hit.collider.GetComponentInParent<DamageHitbox>();
+
+            if (hitbox != null && hitbox.ApplyDamage(currentWeapon.Damage, out Damageable hitboxTarget))
+            {
+                PlayHitboxSound(hitbox);
+                DamageableHit?.Invoke(hitboxTarget);
+                return;
+            }
 
             Damageable damageable = hit.collider.GetComponentInParent<Damageable>();
 
@@ -743,7 +753,7 @@ namespace TermProject.Weapons
                 && CurrentWeaponUsesAutomaticFire()
                 && !reloading
                 && Cursor.lockState == CursorLockMode.Locked
-                && Input.GetButton("Fire1");
+                && IsFireHeld();
         }
 
         private void PlaySound(AudioClip clip, float volume)
@@ -752,6 +762,16 @@ namespace TermProject.Weapons
             {
                 audioSource.PlayOneShot(clip, volume);
             }
+        }
+
+        private void PlayHitboxSound(DamageHitbox hitbox)
+        {
+            if (hitbox == null || hitbox.HitSound == null)
+            {
+                return;
+            }
+
+            PlaySound(hitbox.HitSound, hitbox.HitSoundVolume);
         }
 
         private void PlayFireSound()
@@ -810,7 +830,17 @@ namespace TermProject.Weapons
                 && !reloading
                 && (magazineAmmo > 0 || HasUnlimitedAmmo())
                 && Cursor.lockState == CursorLockMode.Locked
-                && Input.GetButton("Fire1");
+                && IsFireHeld();
+        }
+
+        private bool IsFireHeld()
+        {
+            return Input.GetKey(fireKey);
+        }
+
+        private bool IsFirePressedThisFrame()
+        {
+            return Input.GetKeyDown(fireKey);
         }
 
         private float GetCurrentSecondsPerShot()

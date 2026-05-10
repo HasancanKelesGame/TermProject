@@ -52,13 +52,15 @@ namespace TermProject.Game
         [SerializeField] private bool useCrazyModeOverrides = true;
         [SerializeField] private Transform crazySpawnCenter;
         [SerializeField] private Vector2 crazySpawnAreaSize = new Vector2(34f, 34f);
-        [SerializeField] private int crazyBaseBotCount = 10;
-        [SerializeField] private int crazyBotsAddedPerWave = 5;
-        [SerializeField] private int crazyMaxBotCount = 45;
-        [SerializeField, Min(0f)] private float crazySpawnInterval = 0.1f;
-        [SerializeField] private float crazyMinSpawnDistanceFromPlayer = 4f;
+        [SerializeField] private int crazyBaseBotCount = 5;
+        [SerializeField] private int crazyBotsAddedPerWave = 2;
+        [SerializeField] private int crazyMaxBotCount = 22;
+        [SerializeField, Min(0f)] private float crazySpawnInterval = 0.35f;
+        [SerializeField] private float crazyMinSpawnDistanceFromPlayer = 7f;
         [SerializeField] private float crazyNavMeshSampleRadius = 4f;
         [SerializeField] private int crazySpawnAttempts = 48;
+        [SerializeField, Range(0.1f, 2f)] private float crazyDamageMultiplier = 0.75f;
+        [SerializeField, Range(0.5f, 3f)] private float crazyAttackCooldownMultiplier = 1.25f;
 
         [Header("Debug")]
         [SerializeField] private int currentWave;
@@ -436,7 +438,14 @@ namespace TermProject.Game
         private float GetBotDamageForWave(int wave)
         {
             int waveIndex = Mathf.Max(0, wave - 1);
-            return Mathf.Max(0f, baseBotDamage + waveIndex * damageAddedPerWave);
+            float damage = baseBotDamage + waveIndex * damageAddedPerWave;
+
+            if (IsCrazyModeActive())
+            {
+                damage *= crazyDamageMultiplier;
+            }
+
+            return Mathf.Max(0f, damage);
         }
 
         private float GetBotMoveSpeedForWave(int wave)
@@ -449,6 +458,12 @@ namespace TermProject.Game
         {
             int waveIndex = Mathf.Max(0, wave - 1);
             float cooldown = baseAttackCooldown - waveIndex * attackCooldownReductionPerWave;
+
+            if (IsCrazyModeActive())
+            {
+                cooldown *= crazyAttackCooldownMultiplier;
+            }
+
             return Mathf.Max(minAttackCooldown, cooldown);
         }
 
